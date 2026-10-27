@@ -1,0 +1,42 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="ApartmentManagerWin.Views.HouseDetailDialog"
+        Title="房源详情" Width="860" Height="720"
+        WindowStartupLocation="CenterOwner" MinWidth="700" MinHeight="500"
+        Background="{DynamicResource PageBackground}">
+
+    <DockPanel Margin="20">
+        <!-- 底部按钮 -->
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right" Margin="0,12,0,0">
+            <Button x:Name="SaveMediaBtn" Content="一键保存全部媒体" Click="OnSaveAllMedia" Classes="primary" />
+            <Button Content="关闭" Click="OnClose" Classes="ghost" />
+        </StackPanel>
+
+        <!-- 顶部信息 -->
+        <Border DockPanel.Dock="Top" Classes="card" Padding="16,14" Margin="0,0,0,10">
+            <StackPanel Spacing="6">
+                <Grid ColumnDefinitions="Auto,*,Auto">
+                    <TextBlock x:Name="RoomNoText" FontSize="22" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" />
+                    <TextBlock x:Name="StatusText" Grid.Column="2" FontSize="14" Foreground="{DynamicResource Accent}" VerticalAlignment="Center" />
+                </Grid>
+                <Grid ColumnDefinitions="Auto,*,Auto">
+                    <StackPanel Orientation="Horizontal" Spacing="14">
+                        <TextBlock x:Name="LayoutText" Classes="muted" />
+                        <TextBlock x:Name="LandlordText" Classes="muted" />
+                        <TextBlock x:Name="PriceText" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource Accent}" />
+                    </StackPanel>
+                    <Border Grid.Column="2" CornerRadius="10" Padding="8,3" Background="{DynamicResource AccentSoft}">
+                        <TextBlock x:Name="CloudBadgeText" FontSize="12" Foreground="{DynamicResource Accent}" />
+                    </Border>
+                </Grid>
+                <TextBlock x:Name="LeaseText" Classes="muted" />
+                <TextBlock x:Name="RemarkText" Classes="muted" TextWrapping="Wrap" />
+            </StackPanel>
+        </Border>
+
+        <!-- 媒体网格 -->
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <WrapPanel x:Name="MediaPanel" />
+        </ScrollViewer>
+    </DockPanel>
+</Window>

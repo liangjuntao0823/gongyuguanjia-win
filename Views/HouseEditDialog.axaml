@@ -1,0 +1,74 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="ApartmentManagerWin.Views.HouseEditDialog"
+        Title="新增 / 编辑房源" Width="560" Height="620"
+        WindowStartupLocation="CenterOwner" CanResize="False"
+        Background="{DynamicResource PageBackground}">
+
+    <StackPanel Margin="20" Spacing="10">
+        <TextBlock x:Name="TitleText" Classes="pageTitle" />
+
+        <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ColumnSpacing="12" RowSpacing="10">
+            <StackPanel Grid.Row="0" Grid.Column="0">
+                <TextBlock Text="房号" Classes="muted" />
+                <TextBox x:Name="RoomNoBox" Watermark="如 2325 / 2-1006（带 2- 前缀为2座）" />
+            </StackPanel>
+            <StackPanel Grid.Row="0" Grid.Column="1">
+                <TextBlock Text="户型" Classes="muted" />
+                <ComboBox x:Name="LayoutBox">
+                    <ComboBox.Items>
+                        <ComboBoxItem Content="单间上层" />
+                        <ComboBoxItem Content="单间下层" />
+                        <ComboBoxItem Content="户型复式" />
+                        <ComboBoxItem Content="中空复式" />
+                    </ComboBox.Items>
+                </ComboBox>
+            </StackPanel>
+
+            <StackPanel Grid.Row="1" Grid.Column="0">
+                <TextBlock Text="租金（元/月）" Classes="muted" />
+                <NumericUpDown x:Name="PriceBox" Minimum="0" Maximum="100000" Increment="100" FormatString="0" />
+            </StackPanel>
+            <StackPanel Grid.Row="1" Grid.Column="1">
+                <TextBlock Text="房东" Classes="muted" />
+                <TextBox x:Name="LandlordBox" Watermark="如 康 / 业主" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="2" Grid.Column="0">
+                <TextBlock Text="状态" Classes="muted" />
+                <ComboBox x:Name="StatusBox">
+                    <ComboBox.Items>
+                        <ComboBoxItem Content="未上架（待租）" />
+                        <ComboBoxItem Content="已上架（待租）" />
+                        <ComboBoxItem Content="已出租" />
+                    </ComboBox.Items>
+                </ComboBox>
+            </StackPanel>
+            <StackPanel Grid.Row="2" Grid.Column="1">
+                <TextBlock Text="门牌密码" Classes="muted" />
+                <TextBox x:Name="DoorBox" Watermark="选填" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="3" Grid.Column="0">
+                <TextBlock Text="租期开始" Classes="muted" />
+                <DatePicker x:Name="LeaseStartPicker" />
+            </StackPanel>
+            <StackPanel Grid.Row="3" Grid.Column="1">
+                <TextBlock Text="租期结束" Classes="muted" />
+                <DatePicker x:Name="LeaseEndPicker" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2">
+                <TextBlock Text="备注（全屋定制等）" Classes="muted" />
+                <TextBox x:Name="RemarkBox" Height="60" TextWrapping="Wrap" AcceptsReturn="True" Watermark="选填" />
+            </StackPanel>
+        </Grid>
+
+        <TextBlock x:Name="ErrorText" Foreground="{DynamicResource DangerBrush}" Classes="muted" />
+
+        <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right">
+            <Button Content="取消" Click="OnCancel" Classes="ghost" />
+            <Button Content="保存" Click="OnSave" Classes="primary" />
+        </StackPanel>
+    </StackPanel>
+</Window>

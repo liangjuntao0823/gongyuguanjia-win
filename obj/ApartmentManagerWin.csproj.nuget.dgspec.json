@@ -48,19 +48,23 @@
           "dependencies": {
             "Avalonia": {
               "target": "Package",
-              "version": "[12.1.4, )"
+              "version": "[12.1.2, )"
+            },
+            "Avalonia.Controls.DataGrid": {
+              "target": "Package",
+              "version": "[12.1.2, )"
             },
             "Avalonia.Desktop": {
               "target": "Package",
-              "version": "[12.1.4, )"
+              "version": "[12.1.2, )"
             },
             "Avalonia.Fonts.Inter": {
               "target": "Package",
-              "version": "[12.1.4, )"
+              "version": "[12.1.2, )"
             },
             "Avalonia.Themes.Fluent": {
               "target": "Package",
-              "version": "[12.1.4, )"
+              "version": "[12.1.2, )"
             },
             "AvaloniaUI.DiagnosticsSupport": {
               "include": "None",
@@ -68,9 +72,27 @@
               "target": "Package",
               "version": "[2.2.3, )"
             },
+            "ClosedXML": {
+              "target": "Package",
+              "version": "[0.105.0, )"
+            },
             "CommunityToolkit.Mvvm": {
               "target": "Package",
               "version": "[8.4.2, )"
+            },
+            "Microsoft.Data.Sqlite": {
+              "target": "Package",
+              "version": "[10.0.14, )"
+            },
+            "Microsoft.NET.ILLink.Tasks": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[10.0.14, )",
+              "autoReferenced": true
+            },
+            "QRCoder": {
+              "target": "Package",
+              "version": "[1.6.0, )"
             }
           },
           "imports": [
@@ -84,6 +106,20 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Runtime.win-x64",
+              "version": "[10.0.14, 10.0.14]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[10.0.14, 10.0.14]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Runtime.win-x64",
+              "version": "[10.0.14, 10.0.14]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
@@ -364,6 +400,11 @@
             "System.Xml.XPath": "(,4.3.32767]",
             "System.Xml.XPath.XDocument": "(,5.0.32767]"
           }
+        }
+      },
+      "runtimes": {
+        "win-x64": {
+          "#import": []
         }
       }
     }

@@ -1,0 +1,81 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ApartmentManagerWin.ViewModels"
+             x:Class="ApartmentManagerWin.Views.HousesView"
+             x:DataType="vm:HousesViewModel">
+
+    <Grid RowDefinitions="Auto,*">
+        <!-- 顶栏：统计 + 搜索 + 状态 + 户型多选 + 新增 -->
+        <StackPanel Grid.Row="0" Margin="20,16,20,0" Spacing="10">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <TextBlock Text="房源" Classes="pageTitle" VerticalAlignment="Center" />
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Left" Margin="24,0,0,0" VerticalAlignment="Center">
+                    <TextBox Width="240" Watermark="搜索房号 / 房东" Text="{Binding SearchText}" />
+                    <ComboBox Width="110" ItemsSource="{Binding StatusOptions}" SelectedItem="{Binding StatusFilter}" />
+                </StackPanel>
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
+                    <Button Content="＋ 新增房源" Classes="primary" Click="OnAddHouse" />
+                    <Button Content="同步媒体" Click="OnSyncMedia" />
+                </StackPanel>
+            </Grid>
+
+            <!-- 户型多选芯片 -->
+            <StackPanel Orientation="Horizontal" Spacing="6">
+                <TextBlock Text="户型：" Classes="muted" VerticalAlignment="Center" />
+                <ItemsControl ItemsSource="{Binding LayoutChips}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" Spacing="6" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <ToggleButton Content="{Binding Name}"
+                                          IsChecked="{Binding IsSelected}"
+                                          Click="OnToggleLayout"
+                                          CornerRadius="14" Padding="10,4" FontSize="12.5" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+
+            <TextBlock Text="{Binding StatText}" Classes="muted" />
+        </StackPanel>
+
+        <!-- 房源列表（列表式卡片） -->
+        <ScrollViewer Grid.Row="1" Margin="20,10,20,20" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding Rows}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Classes="card" Margin="0,4" Padding="14,10"
+                                Background="{DynamicResource CardBackground}">
+                            <Border.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="查看详情" Click="OnViewDetail" Tag="{Binding House}" />
+                                    <MenuItem Header="编辑" Click="OnEditHouse" Tag="{Binding House}" />
+                                    <MenuItem Header="删除" Click="OnDeleteHouse" Tag="{Binding House}" />
+                                </ContextMenu>
+                            </Border.ContextMenu>
+                            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                                <!-- 第一行：左边 房号+户型+房东(仅名字)，右边 价格 -->
+                                <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="{Binding RoomNo}" FontSize="15" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" />
+                                    <TextBlock Text="{Binding Layout}" Classes="muted" VerticalAlignment="Center" />
+                                    <TextBlock Text="{Binding Landlord}" Classes="muted" VerticalAlignment="Center" />
+                                </StackPanel>
+                                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Price}" FontSize="15" FontWeight="SemiBold" Foreground="{DynamicResource Accent}" />
+                                <!-- 第二行：左边备注，右边双端标识 -->
+                                <TextBlock Grid.Row="1" Text="{Binding Remark}" Classes="muted" />
+                                <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                                    <Border CornerRadius="10" Padding="6,2" Background="{DynamicResource AccentSoft}">
+                                        <TextBlock Text="{Binding CloudBadge}" FontSize="11.5" Foreground="{DynamicResource Accent}" />
+                                    </Border>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

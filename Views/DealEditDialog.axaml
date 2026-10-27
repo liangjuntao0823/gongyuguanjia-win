@@ -1,0 +1,52 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="ApartmentManagerWin.Views.DealEditDialog"
+        Title="新增 / 编辑成交" Width="480" Height="460"
+        WindowStartupLocation="CenterOwner" CanResize="False"
+        Background="{DynamicResource PageBackground}">
+    <StackPanel Margin="20" Spacing="10">
+        <TextBlock x:Name="TitleText" Classes="pageTitle" />
+        <StackPanel>
+            <TextBlock Text="日期" Classes="muted" />
+            <DatePicker x:Name="DatePicker" />
+        </StackPanel>
+        <StackPanel>
+            <TextBlock Text="房号" Classes="muted" />
+            <TextBox x:Name="RoomBox" Watermark="如 2325 / 2-1006" />
+        </StackPanel>
+        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+            <StackPanel>
+                <TextBlock Text="客户" Classes="muted" />
+                <TextBox x:Name="CustomerBox" Watermark="选填" />
+            </StackPanel>
+            <StackPanel Grid.Column="1">
+                <TextBlock Text="类型" Classes="muted" />
+                <ComboBox x:Name="TypeBox">
+                    <ComboBox.Items>
+                        <ComboBoxItem Content="收租成交" />
+                        <ComboBoxItem Content="出租成交" />
+                        <ComboBoxItem Content="中介费" />
+                    </ComboBox.Items>
+                </ComboBox>
+            </StackPanel>
+        </Grid>
+        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+            <StackPanel>
+                <TextBlock Text="成交金额（元）" Classes="muted" />
+                <NumericUpDown x:Name="AmountBox" Minimum="0" Maximum="99999999" Increment="100" FormatString="0.##" />
+            </StackPanel>
+            <StackPanel Grid.Column="1">
+                <TextBlock Text="中介费（元）" Classes="muted" />
+                <NumericUpDown x:Name="FeeBox" Minimum="0" Maximum="99999999" Increment="50" FormatString="0.##" />
+            </StackPanel>
+        </Grid>
+        <StackPanel>
+            <TextBlock Text="备注" Classes="muted" />
+            <TextBox x:Name="NoteBox" Watermark="选填" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right">
+            <Button Content="取消" Click="OnCancel" Classes="ghost" />
+            <Button Content="保存" Click="OnSave" Classes="primary" />
+        </StackPanel>
+    </StackPanel>
+</Window>

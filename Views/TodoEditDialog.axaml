@@ -1,0 +1,28 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="ApartmentManagerWin.Views.TodoEditDialog"
+        Title="待办" Width="440" Height="420"
+        WindowStartupLocation="CenterOwner" CanResize="False"
+        Background="{DynamicResource PageBackground}">
+    <StackPanel Margin="20" Spacing="12">
+        <TextBlock x:Name="TitleText" Classes="pageTitle" />
+        <StackPanel>
+            <TextBlock Text="标题" Classes="muted" />
+            <TextBox x:Name="TitleBox" Watermark="待办事项" />
+        </StackPanel>
+        <StackPanel>
+            <TextBlock Text="备注" Classes="muted" />
+            <TextBox x:Name="NoteBox" Height="70" TextWrapping="Wrap" AcceptsReturn="True" />
+        </StackPanel>
+        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+            <TextBlock Text="截止日期" Classes="muted" VerticalAlignment="Center" />
+            <DatePicker x:Name="DuePicker" Grid.Column="1" />
+            <ToggleButton Grid.Column="2" x:Name="ReminderToggle" Content="⏰ 提醒" />
+        </Grid>
+        <TextBlock x:Name="ErrorText" Foreground="{DynamicResource DangerBrush}" Classes="muted" />
+        <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right">
+            <Button Content="取消" Click="OnCancel" Classes="ghost" />
+            <Button Content="保存" Click="OnSave" Classes="primary" />
+        </StackPanel>
+    </StackPanel>
+</Window>

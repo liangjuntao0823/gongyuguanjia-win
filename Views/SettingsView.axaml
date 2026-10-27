@@ -1,0 +1,191 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ApartmentManagerWin.ViewModels"
+             x:Class="ApartmentManagerWin.Views.SettingsView"
+             x:DataType="vm:SettingsViewModel">
+
+    <Grid Margin="20" RowDefinitions="Auto,*">
+        <TextBlock Grid.Row="0" Text="设置" Classes="pageTitle" Margin="0,0,0,10" />
+        <TabControl Grid.Row="1">
+            <TabItem Header="云端同步">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Spacing="12" Margin="0,10,0,0">
+                        <Border Classes="card" Padding="16">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="腾讯云 COS + 云函数配置" Classes="sectionTitle" />
+                                <TextBlock Text="配置后房源与媒体将双向同步；未配置时数据仅保存在本地（双端标识显示「本地」）。" Classes="muted" />
+                                <Grid ColumnDefinitions="*,*" ColumnSpacing="10" RowDefinitions="Auto,Auto,Auto,Auto">
+                                    <StackPanel><TextBlock Text="用户名（数据隔离）" Classes="muted" /><TextBox Text="{Binding CloudUsername}" /></StackPanel>
+                                    <StackPanel Grid.Column="1"><TextBlock Text="存储桶 Bucket" Classes="muted" /><TextBox Text="{Binding CloudBucket}" /></StackPanel>
+                                    <StackPanel Grid.Row="1"><TextBlock Text="地域 Region" Classes="muted" /><TextBox Text="{Binding CloudRegion}" Watermark="ap-guangzhou" /></StackPanel>
+                                    <StackPanel Grid.Row="1" Grid.Column="1"><TextBlock Text="SecretId" Classes="muted" /><TextBox Text="{Binding CloudSecretId}" /></StackPanel>
+                                    <StackPanel Grid.Row="2"><TextBlock Text="SecretKey" Classes="muted" /><TextBox Text="{Binding CloudSecretKey}" /></StackPanel>
+                                    <StackPanel Grid.Row="2" Grid.Column="1"><TextBlock Text="自定义域名（选填）" Classes="muted" /><TextBox Text="{Binding CloudCustomDomain}" /></StackPanel>
+                                    <StackPanel Grid.Row="3" Grid.ColumnSpan="2"><TextBlock Text="云函数地址（选填，用于经营数据/远程配置）" Classes="muted" /><TextBox Text="{Binding CloudFunctionUrl}" /></StackPanel>
+                                </Grid>
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <Button Content="保存配置" Classes="primary" Click="OnSaveCos" />
+                                    <Button Content="测试连接" Click="OnTestCos" />
+                                    <Button Content="立即同步" Click="OnSyncNow" />
+                                </StackPanel>
+                                <TextBlock x:Name="CosTestResult" Classes="muted" TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Border>
+
+                        <Border Classes="card" Padding="16">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="远程配置（云端公告 / 更新日志 / 最低版本）" Classes="sectionTitle" />
+                                <TextBlock Text="从云端读取公告、更新日志、最低版本等配置，未配置云函数时显示内置默认。" Classes="muted" />
+                                <Button Content="拉取远程配置" Click="OnFetchRemote" />
+                                <TextBlock x:Name="RemoteResult" Classes="muted" TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="备份与恢复">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Spacing="12" Margin="0,10,0,0">
+                        <Border Classes="card" Padding="16">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="立即备份" Classes="sectionTitle" />
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <Button Content="快速备份（数据）" Classes="primary" Click="OnQuickBackup" />
+                                    <Button Content="全量备份（数据 + 媒体）" Click="OnFullBackup" />
+                                </StackPanel>
+                                <TextBlock x:Name="BackupResult" Classes="muted" TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Border>
+
+                        <Border Classes="card" Padding="16">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="自动备份" Classes="sectionTitle" />
+                                <StackPanel Orientation="Horizontal" Spacing="16">
+                                    <ToggleButton Content="启用自动备份" IsChecked="{Binding AutoBackupEnabled}" Click="OnSaveAutoBackup" />
+                                    <StackPanel Orientation="Horizontal" Spacing="4">
+                                        <TextBlock Text="间隔天数" Classes="muted" VerticalAlignment="Center" />
+                                        <TextBox Width="60" Text="{Binding BackupIntervalDays}" />
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Spacing="4">
+                                        <TextBlock Text="保留份数" Classes="muted" VerticalAlignment="Center" />
+                                        <TextBox Width="60" Text="{Binding BackupKeepCount}" />
+                                    </StackPanel>
+                                    <ToggleButton Content="同步上传云端" IsChecked="{Binding BackupUploadCloud}" Click="OnSaveAutoBackup" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Classes="card" Padding="16">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="本地备份列表" Classes="sectionTitle" />
+                                <ListBox Height="180" ItemsSource="{Binding LocalBackups}" />
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <Button Content="恢复所选" Classes="primary" Click="OnRestoreBackup" />
+                                    <Button Content="删除所选" Click="OnDeleteBackup" />
+                                    <Button Content="上传到云端" Click="OnUploadBackup" />
+                                    <Button Content="刷新列表" Click="OnRefreshBackups" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="回收站">
+                <Grid RowDefinitions="Auto,*">
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,10,0,8">
+                        <Button Content="恢复所选" Classes="primary" Click="OnRestoreTrash" />
+                        <Button Content="彻底删除所选" Click="OnPurgeTrash" Foreground="{DynamicResource DangerBrush}" />
+                        <Button Content="刷新" Click="OnRefreshTrash" />
+                    </StackPanel>
+                    <DataGrid Grid.Row="1" ItemsSource="{Binding TrashItems}" AutoGenerateColumns="False" IsReadOnly="True">
+                        <DataGrid.Columns>
+                            <DataGridCheckBoxColumn Header="选" Binding="{Binding IsSelected}" Width="50" />
+                            <DataGridTextColumn Header="板块" Binding="{Binding Category}" Width="80" />
+                            <DataGridTextColumn Header="名称" Binding="{Binding Name}" Width="*" />
+                            <DataGridTextColumn Header="删除时间" Binding="{Binding DeletedAt}" Width="160" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="外观与提醒">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Spacing="12" Margin="0,10,0,0">
+                        <Border Classes="card" Padding="16">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="外观模式" Classes="sectionTitle" />
+                                <ComboBox Width="200" ItemsSource="{Binding ThemeOptions}" SelectedItem="{Binding ThemeMode}" SelectionChanged="OnThemeChanged" />
+                            </StackPanel>
+                        </Border>
+
+                        <Border Classes="card" Padding="16">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="提醒设置" Classes="sectionTitle" />
+                                <Grid ColumnDefinitions="Auto,Auto,*" ColumnSpacing="10">
+                                    <TextBlock Text="收租提醒提前天数" Classes="muted" VerticalAlignment="Center" />
+                                    <TextBox Grid.Column="1" Width="70" Text="{Binding RentReminderDays}" />
+                                    <Button Grid.Column="2" Content="保存提醒设置" Click="OnSaveReminders" />
+                                </Grid>
+                                <Grid ColumnDefinitions="Auto,Auto,*" ColumnSpacing="10">
+                                    <TextBlock Text="租期到期提前天数" Classes="muted" VerticalAlignment="Center" />
+                                    <TextBox Grid.Column="1" Width="70" Text="{Binding LeaseReminderDays}" />
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="日志与分享">
+                <Grid RowDefinitions="Auto,Auto,*" Margin="0,10,0,0">
+                    <TextBlock Grid.Row="0" Text="操作日志（勾选可多选删除）" Classes="sectionTitle" />
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="10" Margin="0,8">
+                        <Button Content="删除所选" Click="OnDeleteLogs" Foreground="{DynamicResource DangerBrush}" />
+                        <Button Content="刷新" Click="OnRefreshLogs" />
+                    </StackPanel>
+                    <DataGrid Grid.Row="2" ItemsSource="{Binding LogItems}" AutoGenerateColumns="False" IsReadOnly="True" MaxHeight="300">
+                        <DataGrid.Columns>
+                            <DataGridCheckBoxColumn Header="选" Binding="{Binding IsSelected}" Width="50" />
+                            <DataGridTextColumn Header="时间" Binding="{Binding Time}" Width="110" />
+                            <DataGridTextColumn Header="板块" Binding="{Binding Category}" Width="70" />
+                            <DataGridTextColumn Header="动作" Binding="{Binding Action}" Width="90" />
+                            <DataGridTextColumn Header="结果" Binding="{Binding Result}" Width="70" />
+                            <DataGridTextColumn Header="详情" Binding="{Binding Detail}" Width="*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="8" Margin="0,14,0,0">
+                        <TextBlock Text="选房链接访问统计" Classes="sectionTitle" VerticalAlignment="Center" />
+                        <Button Content="刷新" Click="OnRefreshShares" />
+                    </StackPanel>
+                    <DataGrid Grid.Row="2" ItemsSource="{Binding ShareItems}" AutoGenerateColumns="False" IsReadOnly="True" MaxHeight="200" Margin="0,8,0,0">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="时间" Binding="{Binding Time}" Width="140" />
+                            <DataGridTextColumn Header="房号" Binding="{Binding RoomNo}" Width="100" />
+                            <DataGridTextColumn Header="模式" Binding="{Binding Mode}" Width="90" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="关于">
+                <StackPanel Spacing="12" Margin="0,10,0,0">
+                    <Border Classes="card" Padding="16">
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="公寓管家 Windows 版" Classes="sectionTitle" />
+                            <TextBlock Text="版本：v0.1.0（Windows 首版，功能对齐 Mac v1.2.12）" Classes="muted" />
+                            <TextBlock Text="技术栈：Avalonia + C# + SQLite，数据兼容 Mac/iOS 云端协议" Classes="muted" />
+                        </StackPanel>
+                    </Border>
+                    <Border Classes="card" Padding="16">
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="更新记录" Classes="sectionTitle" />
+                            <TextBlock Text="v0.1.0（2026-10）  Windows 首版上线：房源/成交/收租/包租/汇总/待办/设置 全板块、COS 云端同步、备份恢复、黑夜模式、回收站、操作日志、分享统计。" Classes="muted" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>

@@ -1,0 +1,50 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ApartmentManagerWin.ViewModels"
+             x:Class="ApartmentManagerWin.Views.PayoutView"
+             x:DataType="vm:PayoutViewModel">
+
+    <Grid RowDefinitions="Auto,*" Margin="20">
+        <StackPanel Grid.Row="0" Spacing="10">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <TextBlock Text="包租" Classes="pageTitle" VerticalAlignment="Center" />
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
+                    <Button Content="＋ 新增包租合同" Classes="primary" Click="OnAddPayout" />
+                    <Button Content="导出 Excel" Click="OnExportExcel" />
+                    <Button Content="导出图片" Click="OnExportImage" />
+                </StackPanel>
+            </Grid>
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <ComboBox Width="120" ItemsSource="{Binding StatusFilter}" SelectedItem="{Binding SelectedFilter}" />
+                <TextBlock Grid.Column="2" Text="{Binding StatText}" Classes="muted" VerticalAlignment="Center" />
+            </Grid>
+        </StackPanel>
+
+        <!-- 列表式卡片 -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,10,0,0">
+            <ItemsControl ItemsSource="{Binding Rows}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Classes="card" Margin="0,4" Padding="14,10">
+                            <Border.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="查看详情" Click="OnViewDetail" Tag="{Binding Payout}" />
+                                    <MenuItem Header="编辑" Click="OnEditPayout" Tag="{Binding Payout}" />
+                                    <MenuItem Header="删除" Click="OnDeletePayout" Tag="{Binding Payout}" />
+                                </ContextMenu>
+                            </Border.ContextMenu>
+                            <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto,Auto">
+                                <TextBlock Text="{Binding RoomNumber}" FontSize="15" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" Width="110" />
+                                <TextBlock Grid.Column="1" Text="{Binding Manager}" Classes="muted" Width="90" />
+                                <TextBlock Grid.Column="2" Text="{Binding Rent}" Foreground="{DynamicResource Accent}" FontWeight="SemiBold" Width="120" />
+                                <TextBlock Grid.Column="3" Text="{Binding PaymentMethod}" Classes="muted" Width="90" />
+                                <TextBlock Grid.Column="4" Text="{Binding DueDay, StringFormat='{}每{0}日付'}" Classes="muted" Width="90" />
+                                <TextBlock Grid.Column="5" Text="{Binding LeaseRange}" Classes="muted" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

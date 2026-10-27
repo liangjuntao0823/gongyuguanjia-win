@@ -1,0 +1,167 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ApartmentManagerWin.ViewModels"
+             x:Class="ApartmentManagerWin.Views.DashboardView"
+             x:DataType="vm:DashboardViewModel">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="20" Spacing="14">
+
+            <!-- KPI 行 -->
+            <Grid ColumnDefinitions="*,*,*,*,*,*" Margin="0,4,0,0">
+                <Border Classes="card" Margin="0,0,8,0" Padding="14,16">
+                    <StackPanel>
+                        <TextBlock Text="房源总数" Classes="muted" />
+                        <TextBlock Text="{Binding HouseCount}" FontSize="26" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="1" Classes="card" Margin="8,0" Padding="14,16">
+                    <StackPanel>
+                        <TextBlock Text="待租房源" Classes="muted" />
+                        <TextBlock Text="{Binding PendingRentCount}" FontSize="26" FontWeight="SemiBold" Foreground="{DynamicResource SuccessBrush}" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="2" Classes="card" Margin="8,0" Padding="14,16">
+                    <StackPanel>
+                        <TextBlock Text="在租房源" Classes="muted" />
+                        <TextBlock Text="{Binding RentedCount}" FontSize="26" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="3" Classes="card" Margin="8,0" Padding="14,16">
+                    <StackPanel>
+                        <TextBlock Text="本月成交" Classes="muted" />
+                        <TextBlock FontSize="26" FontWeight="SemiBold" Foreground="{DynamicResource Accent}">
+                            <TextBlock.Text><MultiBinding StringFormat="{}{0:0.##} 元"><Binding Path="MonthDealAmount"/></MultiBinding></TextBlock.Text>
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="4" Classes="card" Margin="8,0" Padding="14,16">
+                    <StackPanel>
+                        <TextBlock Text="本月收租" Classes="muted" />
+                        <TextBlock FontSize="26" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}">
+                            <TextBlock.Text><MultiBinding StringFormat="{}{0:0.##} 元"><Binding Path="MonthRentIncome"/></MultiBinding></TextBlock.Text>
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="5" Classes="card" Margin="8,0,0,0" Padding="14,16">
+                    <StackPanel>
+                        <TextBlock Text="本月利润" Classes="muted" />
+                        <TextBlock FontSize="26" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}">
+                            <TextBlock.Text><MultiBinding StringFormat="{}{0:0.##} 元"><Binding Path="MonthProfit"/></MultiBinding></TextBlock.Text>
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- 快捷操作 -->
+            <Border Classes="card" Padding="14,12">
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <TextBlock Text="快捷操作" Classes="sectionTitle" VerticalAlignment="Center" Margin="0,0,6,0" />
+                    <Button Content="新增房源" Classes="primary" Click="OnAddHouse" />
+                    <Button Content="新增成交" Click="OnAddDeal" />
+                    <Button Content="去收租" Click="OnGoRent" />
+                    <Button Content="去包租" Click="OnGoPayout" />
+                    <Button Content="去待办" Click="OnGoTodos" />
+                </StackPanel>
+            </Border>
+
+            <!-- 未收租提醒（2 列） -->
+            <Border Classes="card" Padding="14,12">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="未收租提醒" Classes="sectionTitle" />
+                    <Grid ColumnDefinitions="*,*">
+                        <ItemsControl Grid.Column="0" ItemsSource="{Binding RentDueCards}" Margin="0,0,6,0">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="{DynamicResource CardBorder}" BorderThickness="0,0,0,1" Padding="8,6">
+                                        <Grid ColumnDefinitions="Auto,*,Auto">
+                                            <TextBlock Text="{Binding RoomNumber}" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" />
+                                            <TextBlock Grid.Column="1" Text="{Binding Rent, StringFormat='{}{0}元/月'}" Classes="muted" HorizontalAlignment="Left" Margin="10,0,0,0" />
+                                            <TextBlock Grid.Column="2" Foreground="{DynamicResource WarningBrush}">
+                                                <TextBlock.Text>
+                                                    <MultiBinding StringFormat="{}每{1}日  {0:0}元">
+                                                        <Binding Path="Rent" />
+                                                        <Binding Path="DueDay" />
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <ItemsControl Grid.Column="1" ItemsSource="{Binding RentDueCards2}" Margin="6,0,0,0">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="{DynamicResource CardBorder}" BorderThickness="0,0,0,1" Padding="8,6">
+                                        <Grid ColumnDefinitions="Auto,*,Auto">
+                                            <TextBlock Text="{Binding RoomNumber}" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" />
+                                            <TextBlock Grid.Column="1" Text="{Binding Rent, StringFormat='{}{0}元/月'}" Classes="muted" HorizontalAlignment="Left" Margin="10,0,0,0" />
+                                            <TextBlock Grid.Column="2" Foreground="{DynamicResource WarningBrush}">
+                                                <TextBlock.Text>
+                                                    <MultiBinding StringFormat="{}每{1}日  {0:0}元">
+                                                        <Binding Path="Rent" />
+                                                        <Binding Path="DueDay" />
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- 包租付租提醒 -->
+            <Border Classes="card" Padding="14,12">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="包租付租提醒" Classes="sectionTitle" />
+                    <ItemsControl ItemsSource="{Binding PayoutDueCards}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="{DynamicResource CardBorder}" BorderThickness="0,0,0,1" Padding="8,6">
+                                    <Grid ColumnDefinitions="Auto,*,Auto">
+                                        <TextBlock Text="{Binding RoomNumber}" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" />
+                                        <TextBlock Grid.Column="1" Classes="muted" HorizontalAlignment="Left" Margin="10,0,0,0" Text="包租" />
+                                        <TextBlock Grid.Column="2" Foreground="{DynamicResource WarningBrush}">
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}每{1}日 付{0:0}元">
+                                                    <Binding Path="Amount" />
+                                                    <Binding Path="DueDay" />
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+            <!-- 今日待办入口 -->
+            <Border Classes="card" Padding="14,12">
+                <StackPanel Spacing="8">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="待办（未完成）" Classes="sectionTitle" />
+                        <TextBlock Text="{Binding OpenTodoCount}" Classes="muted" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <ItemsControl ItemsSource="{Binding TodayTodos}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="{DynamicResource CardBorder}" BorderThickness="0,0,0,1" Padding="8,6">
+                                    <Grid ColumnDefinitions="Auto,*">
+                                        <TextBlock Text="☐" Foreground="{DynamicResource Accent}" />
+                                        <TextBlock Grid.Column="1" Text="{Binding Title}" Foreground="{DynamicResource TextPrimary}" Margin="8,0,0,0" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

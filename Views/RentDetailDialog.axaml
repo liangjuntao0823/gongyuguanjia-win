@@ -1,0 +1,83 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="ApartmentManagerWin.Views.RentDetailDialog"
+        Title="收租详情" Width="680" Height="760"
+        WindowStartupLocation="CenterOwner" MinWidth="600" MinHeight="560"
+        Background="{DynamicResource PageBackground}">
+    <DockPanel Margin="20">
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right" Margin="0,10,0,0">
+            <Button x:Name="TerminateBtn" Content="退租" Click="OnTerminate" />
+            <Button x:Name="EditBtn" Content="编辑" Click="OnEdit" />
+            <Button Content="关闭" Click="OnClose" Classes="ghost" />
+        </StackPanel>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="12">
+                <!-- 标题 -->
+                <TextBlock x:Name="TitleText" Classes="pageTitle" />
+
+                <!-- 分组1：基本信息 -->
+                <Border Classes="card" Padding="14">
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="基本信息" Classes="sectionTitle" />
+                        <Grid ColumnDefinitions="Auto,*,Auto,*" ColumnSpacing="8" RowDefinitions="Auto,Auto,Auto">
+                            <TextBlock Text="房号" Classes="muted" /><TextBlock x:Name="RoomNoText" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" />
+                            <TextBlock Grid.Column="2" Text="房东" Classes="muted" /><TextBlock Grid.Column="3" x:Name="LandlordText" Foreground="{DynamicResource TextPrimary}" />
+                            <TextBlock Grid.Row="1" Text="户型" Classes="muted" /><TextBlock Grid.Row="1" Grid.Column="1" x:Name="UnitText" Foreground="{DynamicResource TextPrimary}" />
+                            <TextBlock Grid.Row="1" Grid.Column="2" Text="类型" Classes="muted" /><TextBlock Grid.Row="1" Grid.Column="3" x:Name="TypeText" Foreground="{DynamicResource TextPrimary}" />
+                            <TextBlock Grid.Row="2" Text="租金" Classes="muted" /><TextBlock Grid.Row="2" Grid.Column="1" x:Name="RentText" Foreground="{DynamicResource Accent}" FontWeight="SemiBold" />
+                            <TextBlock Grid.Row="2" Grid.Column="2" Text="交租日" Classes="muted" /><TextBlock Grid.Row="2" Grid.Column="3" x:Name="DueDayText" Foreground="{DynamicResource TextPrimary}" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- 分组2：租期与押金 -->
+                <Border Classes="card" Padding="14">
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="租期与押金" Classes="sectionTitle" />
+                        <Grid ColumnDefinitions="Auto,*,Auto,*" ColumnSpacing="8" RowDefinitions="Auto,Auto,Auto">
+                            <TextBlock Text="租期开始" Classes="muted" /><TextBlock x:Name="StartText" Foreground="{DynamicResource TextPrimary}" />
+                            <TextBlock Grid.Column="2" Text="租期结束" Classes="muted" /><TextBlock Grid.Column="3" x:Name="EndText" Foreground="{DynamicResource TextPrimary}" />
+                            <TextBlock Grid.Row="1" Text="押金" Classes="muted" /><TextBlock Grid.Row="1" Grid.Column="1" x:Name="DepositText" Foreground="{DynamicResource TextPrimary}" />
+                            <TextBlock Grid.Row="1" Grid.Column="2" Text="预存" Classes="muted" /><TextBlock Grid.Row="1" Grid.Column="3" x:Name="PrepayText" Foreground="{DynamicResource TextPrimary}" />
+                            <TextBlock Grid.Row="2" Grid.ColumnSpan="4" x:Name="NoteText" Classes="muted" TextWrapping="Wrap" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- 分组3：水电底数 -->
+                <Border Classes="card" Padding="14">
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="水电底数" Classes="sectionTitle" />
+                        <Grid ColumnDefinitions="Auto,*,Auto,*" ColumnSpacing="8">
+                            <TextBlock Text="水表底数" Classes="muted" /><TextBlock x:Name="WaterText" Foreground="{DynamicResource TextPrimary}" />
+                            <TextBlock Grid.Column="2" Text="电表底数" Classes="muted" /><TextBlock Grid.Column="3" x:Name="ElectricText" Foreground="{DynamicResource TextPrimary}" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- 分组4：月度收租 -->
+                <Border Classes="card" Padding="14">
+                    <StackPanel Spacing="6">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock Text="月度收租" Classes="sectionTitle" />
+                            <TextBlock x:Name="RentSummaryText" Classes="muted" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <ItemsControl x:Name="RentList" />
+                    </StackPanel>
+                </Border>
+
+                <!-- 分组5：水电结算计划 -->
+                <Border Classes="card" Padding="14">
+                    <StackPanel Spacing="6">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock Text="水电结算计划" Classes="sectionTitle" />
+                            <TextBlock x:Name="UtilSummaryText" Classes="muted" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <ItemsControl x:Name="UtilList" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</Window>

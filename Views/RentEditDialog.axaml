@@ -1,0 +1,84 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="ApartmentManagerWin.Views.RentEditDialog"
+        Title="新增 / 编辑收租房源" Width="580" Height="680"
+        WindowStartupLocation="CenterOwner" CanResize="False"
+        Background="{DynamicResource PageBackground}">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="20" Spacing="10">
+            <TextBlock x:Name="TitleText" Classes="pageTitle" />
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="10" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+                <StackPanel Grid.Row="0">
+                    <TextBlock Text="房号" Classes="muted" />
+                    <TextBox x:Name="RoomBox" Watermark="如 2325 / 2-1006" />
+                </StackPanel>
+                <StackPanel Grid.Row="0" Grid.Column="1">
+                    <TextBlock Text="房东" Classes="muted" />
+                    <TextBox x:Name="LandlordBox" />
+                </StackPanel>
+                <StackPanel Grid.Row="1">
+                    <TextBlock Text="户型" Classes="muted" />
+                    <ComboBox x:Name="UnitBox">
+                        <ComboBox.Items>
+                            <ComboBoxItem Content="单间上层" />
+                            <ComboBoxItem Content="单间下层" />
+                            <ComboBoxItem Content="户型复式" />
+                            <ComboBoxItem Content="中空复式" />
+                        </ComboBox.Items>
+                    </ComboBox>
+                </StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="1">
+                    <TextBlock Text="类型" Classes="muted" />
+                    <ComboBox x:Name="TypeBox">
+                        <ComboBox.Items>
+                            <ComboBoxItem Content="管理" />
+                            <ComboBoxItem Content="托管" />
+                            <ComboBoxItem Content="包租" />
+                        </ComboBox.Items>
+                    </ComboBox>
+                </StackPanel>
+                <StackPanel Grid.Row="2">
+                    <TextBlock Text="租金（元/月）" Classes="muted" />
+                    <NumericUpDown x:Name="RentBox" Minimum="0" Maximum="100000" Increment="100" FormatString="0" />
+                </StackPanel>
+                <StackPanel Grid.Row="2" Grid.Column="1">
+                    <TextBlock Text="押金（元）" Classes="muted" />
+                    <NumericUpDown x:Name="DepositBox" Minimum="0" Maximum="100000" Increment="100" FormatString="0" />
+                </StackPanel>
+                <StackPanel Grid.Row="3">
+                    <TextBlock Text="预存（元）" Classes="muted" />
+                    <NumericUpDown x:Name="PrepayBox" Minimum="0" Maximum="100000" Increment="100" FormatString="0" />
+                </StackPanel>
+                <StackPanel Grid.Row="3" Grid.Column="1">
+                    <TextBlock Text="交租日（每月几号）" Classes="muted" />
+                    <NumericUpDown x:Name="DueDayBox" Minimum="1" Maximum="31" Increment="1" FormatString="0" />
+                </StackPanel>
+                <StackPanel Grid.Row="4">
+                    <TextBlock Text="租期开始" Classes="muted" />
+                    <DatePicker x:Name="StartPicker" />
+                </StackPanel>
+                <StackPanel Grid.Row="4" Grid.Column="1">
+                    <TextBlock Text="租期结束" Classes="muted" />
+                    <DatePicker x:Name="EndPicker" />
+                </StackPanel>
+                <StackPanel Grid.Row="5">
+                    <TextBlock Text="水表底数" Classes="muted" />
+                    <NumericUpDown x:Name="WaterBox" Minimum="0" Maximum="999999" Increment="1" FormatString="0.##" />
+                </StackPanel>
+                <StackPanel Grid.Row="5" Grid.Column="1">
+                    <TextBlock Text="电表底数" Classes="muted" />
+                    <NumericUpDown x:Name="ElectricBox" Minimum="0" Maximum="999999" Increment="1" FormatString="0.##" />
+                </StackPanel>
+                <StackPanel Grid.Row="6" Grid.ColumnSpan="2">
+                    <TextBlock Text="备注" Classes="muted" />
+                    <TextBox x:Name="NoteBox" Height="60" TextWrapping="Wrap" AcceptsReturn="True" />
+                </StackPanel>
+            </Grid>
+            <TextBlock x:Name="ErrorText" Foreground="{DynamicResource DangerBrush}" Classes="muted" />
+            <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right">
+                <Button Content="取消" Click="OnCancel" Classes="ghost" />
+                <Button Content="保存" Click="OnSave" Classes="primary" />
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</Window>

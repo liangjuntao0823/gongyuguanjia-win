@@ -7,9 +7,9 @@ build_property.AvaloniaNameGeneratorFilterByNamespace = *
 build_property.AvaloniaNameGeneratorViewFileNamingStrategy = NamespaceAndClassName
 build_property.AvaloniaNameGeneratorAttachDevTools = true
 build_property.AvaloniaUseCompiledBindingsByDefault = true
-build_property.AvaloniaMainPackageVersion = 12.1.4
-build_property.AvaloniaPreviewerNetCoreToolPath = /home/user/.nuget/packages/avalonia/12.1.4/buildTransitive//../tools/net8.0/designer/Avalonia.Designer.HostApp.dll
-build_property.AvaloniaResourcePaths = /home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Assets/avalonia-logo.ico,/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/App.axaml,/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/MainWindow.axaml
+build_property.AvaloniaMainPackageVersion = 12.1.2
+build_property.AvaloniaPreviewerNetCoreToolPath = /home/user/.nuget/packages/avalonia/12.1.2/buildTransitive//../tools/net8.0/designer/Avalonia.Designer.HostApp.dll
+build_property.AvaloniaResourcePaths = /home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Assets/avalonia-logo.ico,/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/App.axaml,/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/DashboardView.axaml,/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/DealEditDialog.axaml,/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/DealsView.axaml,/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/HouseDetailDialog.axaml,/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/HouseEditDialog.axaml,/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/HousesView.axaml,/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/MainWindow.axaml,/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/PayoutDetailDialog.axaml,/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/PayoutEditDialog.axaml,/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/PayoutView.axaml,/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/RentDetailDialog.axaml,/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/RentEditDialog.axaml,/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/RentView.axaml,/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/SettingsView.axaml,/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/SummaryView.axaml,/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/TodoEditDialog.axaml,/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/TodosView.axaml
 build_property.MvvmToolkitEnableINotifyPropertyChangingSupport = true
 build_property._MvvmToolkitIsUsingWindowsRuntimePack = false
 build_property.CsWinRTComponent = 
@@ -36,5 +36,53 @@ build_property.EnableCodeStyleSeverity =
 [/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/App.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
+[/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/DashboardView.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/DealEditDialog.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/DealsView.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/HouseDetailDialog.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/HouseEditDialog.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/HousesView.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
 [/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/MainWindow.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/PayoutDetailDialog.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/PayoutEditDialog.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/PayoutView.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/RentDetailDialog.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/RentEditDialog.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/RentView.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/SettingsView.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/SummaryView.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/TodoEditDialog.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[/home/user/Doubao/chats/38449185195133442/ApartmentManagerWin/Views/TodosView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
