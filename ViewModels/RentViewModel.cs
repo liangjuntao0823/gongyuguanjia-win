@@ -24,6 +24,10 @@ public partial class RentViewModel : ViewModelBase
 {
     public ObservableCollection<RentRow> Rows { get; } = new();
     public ObservableCollection<string> StatusFilter { get; } = new() { "在租", "已退租", "全部" };
+    public ObservableCollection<string> DueDayFilter { get; } = new() { "全部" };
+
+    [ObservableProperty]
+    private string selectedDueDay = "全部";
 
     [ObservableProperty]
     private string selectedStatus = "在租";
@@ -37,11 +41,20 @@ public partial class RentViewModel : ViewModelBase
     }
 
     partial void OnSelectedStatusChanged(string value) => Refresh();
+    partial void OnSelectedDueDayChanged(string value) => Refresh();
 
     public void Refresh()
     {
         Rows.Clear();
         var list = AppDb.GetProperties();
+        // 交租日筛选（对齐 Mac：全部/1号/13号/15号/20号/23号/25号）
+        var allProps = AppDb.GetProperties().Where(p => !p.IsDeleted).ToList();
+        var dueDays = allProps.Where(p => p.RentDueDay > 0).Select(p => p.RentDueDay).Distinct().OrderBy(d => d).ToList();
+        var prev = SelectedDueDay;
+        DueDayFilter.Clear();
+        DueDayFilter.Add("全部");
+        foreach (var d in dueDays) DueDayFilter.Add($"{d}号");
+        if (!DueDayFilter.Contains(prev)) SelectedDueDay = "全部";
         var filtered = SelectedStatus switch
         {
             "在租" => list.Where(p => !p.IsTerminated),
@@ -52,7 +65,15 @@ public partial class RentViewModel : ViewModelBase
             Rows.Add(new RentRow { Property = p });
         var total = list.Count(p => !p.IsTerminated);
         var monthIncome = list.Where(p => !p.IsTerminated).Sum(p => (decimal)p.Rent);
-        StatText = $"在租 {total} 套 ｜ 月收租合计 {monthIncome:0.##} 元 ｜ 显示 {Rows.Count} 套";
+        var dueSel = SelectedDueDay;
+        if (dueSel != "全部")
+        {
+            var dd = int.Parse(dueSel.Replace("号", ""));
+            filtered = filtered.Where(p => p.RentDueDay == dd);
+        }
+        var rentedCount = allProps.Count(p => !p.IsTerminated);
+        var retiredCount = allProps.Count(p => p.IsTerminated);
+        StatText = $"在租 {rentedCount} · 退租 {retiredCount} ｜ 月收租合计 {monthIncome:0.##} 元 ｜ 显示 {Rows.Count} 套";
         OnPropertyChanged(nameof(StatText));
     }
 

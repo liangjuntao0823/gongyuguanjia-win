@@ -19,35 +19,26 @@
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,10,0,0">
             <StackPanel Spacing="12">
-                <!-- 三大指标（加大字号） -->
-                <Grid ColumnDefinitions="*,*,*">
-                    <Border Classes="card" Margin="0,0,6,0" Padding="18,18">
-                        <StackPanel>
-                            <TextBlock Text="总收入" Classes="muted" />
-                            <TextBlock FontSize="34" FontWeight="Bold" Foreground="{DynamicResource SuccessBrush}">
-                                <TextBlock.Text><Binding Path="TotalIncomeText"/></TextBlock.Text>
-                            </TextBlock>
-                        </StackPanel>
+                <!-- 对齐 Mac：5 KPI 卡 -->
+                <Grid ColumnDefinitions="*,*,*,*,*" Margin="0,4,0,0">
+                    <Border Classes="kpi" Margin="0,0,5,0" Padding="14,14">
+                        <StackPanel><TextBlock Text="成交" Classes="kpiLabel" /><TextBlock Text="{Binding DealCountText}" Classes="kpiValue" /><TextBlock Text="单" Classes="kpiLabel" HorizontalAlignment="Left" /></StackPanel>
                     </Border>
-                    <Border Grid.Column="1" Classes="card" Margin="6,0" Padding="18,18">
-                        <StackPanel>
-                            <TextBlock Text="总支出" Classes="muted" />
-                            <TextBlock FontSize="34" FontWeight="Bold" Foreground="{DynamicResource DangerBrush}">
-                                <TextBlock.Text><Binding Path="TotalExpenseText"/></TextBlock.Text>
-                            </TextBlock>
-                        </StackPanel>
+                    <Border Grid.Column="1" Classes="kpi" Margin="5,0" Padding="14,14">
+                        <StackPanel><TextBlock Text="中介费" Classes="kpiLabel" /><TextBlock Text="{Binding AgentFeeText}" Classes="kpiValue" Foreground="{DynamicResource Accent}" /></StackPanel>
                     </Border>
-                    <Border Grid.Column="2" Classes="card" Margin="6,0,0,0" Padding="18,18">
-                        <StackPanel>
-                            <TextBlock Text="利润" Classes="muted" />
-                            <TextBlock FontSize="34" FontWeight="Bold" Foreground="{DynamicResource Accent}">
-                                <TextBlock.Text><Binding Path="ProfitText"/></TextBlock.Text>
-                            </TextBlock>
-                        </StackPanel>
+                    <Border Grid.Column="2" Classes="kpi" Margin="5,0" Padding="14,14">
+                        <StackPanel><TextBlock Text="杂项收入" Classes="kpiLabel" /><TextBlock Text="{Binding MiscIncomeText}" Classes="kpiValue" Foreground="{DynamicResource SuccessBrush}" /></StackPanel>
+                    </Border>
+                    <Border Grid.Column="3" Classes="kpi" Margin="5,0" Padding="14,14">
+                        <StackPanel><TextBlock Text="杂项支出" Classes="kpiLabel" /><TextBlock Text="{Binding MiscExpenseText}" Classes="kpiValue" Foreground="{DynamicResource DangerBrush}" /></StackPanel>
+                    </Border>
+                    <Border Grid.Column="4" Classes="kpi" Margin="5,0,0,0" Padding="14,14">
+                        <StackPanel><TextBlock Text="净总收入" Classes="kpiLabel" /><TextBlock Text="{Binding NetIncomeText}" Classes="kpiValue" Foreground="{DynamicResource Accent}" /></StackPanel>
                     </Border>
                 </Grid>
 
-                <!-- 月度明细（加大字体） -->
+<!-- 月度明细（加大字体） -->
                 <Border Classes="card" Padding="16,12">
                     <StackPanel Spacing="8">
                         <TextBlock Text="月度明细" Classes="sectionTitle" />

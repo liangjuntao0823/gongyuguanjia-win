@@ -17,12 +17,21 @@ public class DealRow
     public decimal Amount => Deal.Amount;
     public decimal AgentFee => Deal.AgentFee;
     public string Note => Deal.Note;
+    public string Landlord => Deal.Landlord;
+    public string UnitType => Deal.UnitType;
+    public string LeaseDuration => Deal.LeaseDuration;
+    public string RentText => $"¥{Deal.Rent:0}";
+    public string DepositText => $"¥{Deal.Deposit:0}";
+    public string Manager => Deal.Manager;
     public string Summary => $"{Type}｜{Amount:0.##}元｜中介费{AgentFee:0.##}元";
 }
 
 public partial class DealsViewModel : ViewModelBase
 {
     public ObservableCollection<DealRow> Rows { get; } = new();
+    [ObservableProperty]
+    private string searchText = "";
+
     public ObservableCollection<int> Years { get; } = new();
     public ObservableCollection<string> Months { get; } = new();
 
@@ -53,6 +62,7 @@ public partial class DealsViewModel : ViewModelBase
 
     partial void OnSelectedYearChanged(int value) => Refresh();
     partial void OnSelectedMonthChanged(string value) => Refresh();
+    partial void OnSearchTextChanged(string value) => Refresh();
 
     public void Refresh()
     {
@@ -64,11 +74,16 @@ public partial class DealsViewModel : ViewModelBase
             var m = int.Parse(SelectedMonth.Replace("月", ""));
             filtered = filtered.Where(d => d.Date.Month == m);
         }
+        if (!string.IsNullOrWhiteSpace(SearchText))
+            filtered = filtered.Where(d => d.RoomNumber.Contains(SearchText) || d.Landlord.Contains(SearchText) || d.Customer.Contains(SearchText) || d.UnitType.Contains(SearchText));
         var rows = filtered.OrderByDescending(d => d.Date).ToList();
         foreach (var d in rows) Rows.Add(new DealRow { Deal = d });
         TotalAmount = rows.Sum(r => r.Amount);
         TotalFee = rows.Sum(r => r.AgentFee);
-        StatText = $"{SelectedYear}{(SelectedMonth == "全部" ? "" : SelectedMonth)} 共 {rows.Count} 条 ｜ 成交总额 {TotalAmount:0.##} 元 ｜ 中介费 {TotalFee:0.##} 元";
+        var dealCount = rows.Count;
+        var incomeCount = AppDb.GetMiscIncomes().Count(m => m.Date.Year == SelectedYear && (SelectedMonth == "全部" || m.Date.Month == int.Parse(SelectedMonth.Replace("月", ""))));
+        var expenseCount = AppDb.GetMiscExpenses().Count(m => m.Date.Year == SelectedYear && (SelectedMonth == "全部" || m.Date.Month == int.Parse(SelectedMonth.Replace("月", ""))));
+        StatText = $"成交 {dealCount} · 杂项收入 {incomeCount} · 杂项支出 {expenseCount} ｜ 成交总额 {TotalAmount:0.##} 元 ｜ 中介费 {TotalFee:0.##} 元";
         OnPropertyChanged(nameof(StatText));
     }
 

@@ -66,6 +66,11 @@ public partial class DashboardViewModel : ViewModelBase
     public List<TodoItem> TodayTodos { get; private set; } = new();
     public List<ExpiringRow> ExpiringSoon { get; private set; } = new();
 
+
+    // v1.0：对齐 Mac 工作台顶栏（时间/日期/倒计时标语）
+    public string CurrentTimeText => DateTime.Now.ToString("HH:mm");
+    public string CurrentDateText => DateTime.Now.ToString("M月d日 ddd");
+    public string MonthCountdownText => $"{DateTime.Now.Month}月还剩 {DaysLeftInMonth} 天 {HoursLeftInMonth} 小时，加油";
     [ObservableProperty]
     private string userTitle = "";
     [ObservableProperty]

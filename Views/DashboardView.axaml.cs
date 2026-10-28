@@ -76,4 +76,14 @@ public partial class DashboardView : UserControl
     private void OnAddExpense(object? sender, RoutedEventArgs e) => new MiscEditDialog(false).ShowDialog(GetWindow(this));
     private void OnAddPayout(object? sender, RoutedEventArgs e) => new PayoutEditDialog().ShowDialog(GetWindow(this));
     private void OnAddTodo(object? sender, RoutedEventArgs e) => new TodoEditDialog().ShowDialog(GetWindow(this));
+
+    private void OnAddRent(object? sender, RoutedEventArgs e) => new RentEditDialog().ShowDialog(GetWindow(this));
+
+    private void OnOpenAdmin(object? sender, RoutedEventArgs e)
+    {
+        var url = ApartmentManagerWin.Models.CosConfig.Load().FunctionUrl;
+        if (string.IsNullOrEmpty(url)) { Services.NotifyService.Push("管理后台", "未配置云函数地址，无法打开", Services.NotifyKind.Info); return; }
+        try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true }); }
+        catch (Exception ex) { Services.NotifyService.Push("管理后台", "打开失败：" + ex.Message, Services.NotifyKind.Warning); }
+    }
 }

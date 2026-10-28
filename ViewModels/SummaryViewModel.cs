@@ -32,6 +32,24 @@ public partial class SummaryViewModel : ViewModelBase
     private decimal totalExpense;
     [ObservableProperty]
     private decimal profit;
+
+    // v1.0：对齐 Mac 汇总页 5 KPI（成交单数/中介费/杂项收入/杂项支出/净总收入）
+    [ObservableProperty]
+    private int dealCount;
+    [ObservableProperty]
+    private decimal agentFee;
+    [ObservableProperty]
+    private decimal miscIncome;
+    [ObservableProperty]
+    private decimal miscExpense;
+    [ObservableProperty]
+    private decimal netIncome;
+
+    public string DealCountText => $"{DealCount}单";
+    public string AgentFeeText => $"¥{AgentFee:0}";
+    public string MiscIncomeText => $"¥{MiscIncome:0}";
+    public string MiscExpenseText => $"¥{MiscExpense:0}";
+    public string NetIncomeText => $"¥{NetIncome:0}";
     [ObservableProperty]
     private bool hideData;   // v1.0：对齐 iOS 汇总页隐藏数据开关 "**"
 
@@ -105,9 +123,20 @@ public partial class SummaryViewModel : ViewModelBase
         TotalIncome = rentPaid + dealAmount + agentFee + miscIncome;
         TotalExpense = payoutPaid + miscExpense;
         Profit = TotalIncome - TotalExpense;
+        // Mac 口径 5 KPI
+        DealCount = deals.Count;
+        AgentFee = agentFee;
+        MiscIncome = miscIncome;
+        MiscExpense = miscExpense;
+        NetIncome = AgentFee + MiscIncome - MiscExpense;
         StatText = $"{SelectedYear}{(SelectedMonth == "全部" ? "" : SelectedMonth)} 月度明细";
         OnPropertyChanged(nameof(StatText));
         OnPropertyChanged(nameof(TotalIncomeText));
+        OnPropertyChanged(nameof(DealCountText));
+        OnPropertyChanged(nameof(AgentFeeText));
+        OnPropertyChanged(nameof(MiscIncomeText));
+        OnPropertyChanged(nameof(MiscExpenseText));
+        OnPropertyChanged(nameof(NetIncomeText));
         OnPropertyChanged(nameof(TotalExpenseText));
         OnPropertyChanged(nameof(ProfitText));
     }

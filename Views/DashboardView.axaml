@@ -7,18 +7,23 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="20" Spacing="14">
 
-            <!-- 顶栏用户区（对齐 Mac/iOS 工作台顶栏） -->
-            <Border Classes="card" Padding="16,14">
-                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-                    <StackPanel Spacing="3">
-                        <TextBlock Text="{Binding UserTitle}" FontSize="20" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" />
-                        <TextBlock Text="{Binding UserSubtitle}" Classes="muted" />
+            <!-- 顶栏用户区（Mac 横条样式：左用户信息+倒计时，右时间日期） -->
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
+                <StackPanel Spacing="2">
+                    <TextBlock Text="{Binding UserTitle}" FontSize="20" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" />
+                    <TextBlock Text="{Binding UserSubtitle}" Classes="muted" />
+                    <TextBlock Text="{Binding MonthCountdownText}" FontSize="13" Foreground="{DynamicResource Accent}" FontWeight="SemiBold" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="14" VerticalAlignment="Center">
+                    <StackPanel HorizontalAlignment="Right">
+                        <TextBlock Text="{Binding CurrentTimeText}" FontSize="20" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" HorizontalAlignment="Right" />
+                        <TextBlock Text="{Binding CurrentDateText}" Classes="muted" HorizontalAlignment="Right" />
                     </StackPanel>
-                    <Button Grid.Column="1" Content="✎ 编辑" Classes="toolbar" VerticalAlignment="Center" Click="OnEditUserCard"><StackPanel Orientation="Horizontal" Spacing="5"><TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/><TextBlock Text="编辑" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/></StackPanel></Button>
-                </Grid>
-            </Border>
+                    <Button Content="✎ 编辑" Classes="toolbar" VerticalAlignment="Center" Click="OnEditUserCard"><StackPanel Orientation="Horizontal" Spacing="5"><TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/><TextBlock Text="编辑" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/></StackPanel></Button>
+                </StackPanel>
+            </Grid>
 
-            <!-- v1.0：本月倒计时（对齐 iOS） -->
+<!-- v1.0：本月倒计时（对齐 iOS） -->
             <Border Classes="card" Padding="14,10" Background="{DynamicResource AccentSoft}">
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <TextBlock Text="本月还剩" Classes="sectionTitle" VerticalAlignment="Center" />
@@ -96,20 +101,18 @@
                 </Border>
             </Grid>
 
-            <!-- 快捷操作 -->
+            <!-- 快捷操作（对齐 Mac 8 项） -->
             <Border Classes="card" Padding="16,12">
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <TextBlock Text="快捷操作" Classes="sectionTitle" VerticalAlignment="Center" Margin="0,0,10,0" />
-                    <Button Classes="primary" Click="OnAddHouse"><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE710;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="White" /><TextBlock Text="新增房源" VerticalAlignment="Center" Foreground="White" /></StackPanel></Button>
                     <Button Classes="primary" Click="OnAddDeal"><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE710;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="White" /><TextBlock Text="新增成交" VerticalAlignment="Center" Foreground="White" /></StackPanel></Button>
                     <Button Click="OnAddIncome"><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE710;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}" /><TextBlock Text="新增收入" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}" /></StackPanel></Button>
                     <Button Click="OnAddExpense"><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE8BD;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}" /><TextBlock Text="新增支出" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}" /></StackPanel></Button>
                     <Button Click="OnAddPayout"><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE710;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}" /><TextBlock Text="新增包租" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}" /></StackPanel></Button>
                     <Button Click="OnAddTodo"><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE710;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}" /><TextBlock Text="新增待办" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}" /></StackPanel></Button>
-                    <Button Classes="primary" Click="OnQuickCollectToday"><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE72C;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="White" /><TextBlock Text="一键收今日到期" VerticalAlignment="Center" Foreground="White" /></StackPanel></Button>
-                    <Button Click="OnGoRent"><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE8C7;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}" /><TextBlock Text="去收租" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}" /></StackPanel></Button>
-                    <Button Click="OnGoPayout"><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE9D5;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}" /><TextBlock Text="去包租" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}" /></StackPanel></Button>
-                    <Button Click="OnGoTodos"><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}" /><TextBlock Text="去待办" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}" /></StackPanel></Button>
+                    <Button Click="OnAddRent"><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE8C7;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}" /><TextBlock Text="新增收租" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}" /></StackPanel></Button>
+                    <Button Click="OnOpenAdmin"><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE9D2;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}" /><TextBlock Text="管理后台" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}" /></StackPanel></Button>
+                    <Button Classes="primary" Click="OnAddHouse"><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE710;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="White" /><TextBlock Text="新增房源" VerticalAlignment="Center" Foreground="White" /></StackPanel></Button>
                 </StackPanel>
             </Border>
 

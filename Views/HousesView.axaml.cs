@@ -232,4 +232,10 @@ public partial class HousesView : UserControl
         => Avalonia.Application.Current?.ApplicationLifetime is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime lt
             ? lt.MainWindow
             : null;
+
+    private void OnRefreshLocal(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is ApartmentManagerWin.ViewModels.HousesViewModel vm) vm.Refresh();
+        Services.NotifyService.Push("房源", "本地列表已刷新", Services.NotifyKind.Success);
+    }
 }

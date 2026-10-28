@@ -46,6 +46,11 @@ public partial class HousesViewModel : ViewModelBase
     [ObservableProperty]
     private string statusFilter = "待租";   // 待租(默认)/已租/全部
 
+
+    public ObservableCollection<string> TowerOptions { get; } = new() { "全部座", "1座", "2座" };
+
+    [ObservableProperty]
+    private string towerFilter = "全部座";
     public ObservableCollection<string> StatusOptions { get; } = new() { "待租", "已租", "全部" };
 
     public ObservableCollection<LayoutChip> LayoutChips { get; } = new();
@@ -68,6 +73,7 @@ public partial class HousesViewModel : ViewModelBase
 
     partial void OnSearchTextChanged(string value) => Refresh();
     partial void OnStatusFilterChanged(string value) => Refresh();
+    partial void OnTowerFilterChanged(string value) => Refresh();
 
     public void ToggleLayout(LayoutChip chip)
     {
@@ -112,7 +118,10 @@ public partial class HousesViewModel : ViewModelBase
         var t2 = all.Count(h => h.Tower == 2);
         var withMedia = all.Count(h => h.HasMedia);
         var withVideo = AppDb.GetHouses().Count(h => h.HasVideo);
-        StatText = $"目前已收录房源总计：1座 {t1} 套，2座 {t2} 套 ｜ 带图 {withMedia} 套 ｜ 有视频 {withVideo} 套 ｜ 当前显示 {Rows.Count} 套";
+        var rented = AppDb.GetHouses().Count(h => h.IsRented && !h.IsDeleted);
+        var unrented = AppDb.GetHouses().Count(h => !h.IsRented && !h.IsDeleted);
+        var noMedia = AppDb.GetHouses().Count(h => !h.HasMedia && !h.IsDeleted);
+        StatText = $"共 {Rows.Count} 套 · 1座 {t1} · 2座 {t2} · 待租 {unrented} · 已租 {rented} · 实拍图 {withMedia}/无 {noMedia}";
         OnPropertyChanged(nameof(StatText));
     }
 

@@ -84,4 +84,13 @@ public partial class DealsView : UserControl
         while (c != null) { if (c is Window w) return w; c = c.Parent; }
         return null;
     }
+
+    private void OnViewDetail(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (sender is Avalonia.Controls.Button b && b.Tag is Models.DealRecord d)
+        {
+            var dlg = new DealEditDialog(d);
+            dlg.ShowDialog(GetWindow(this));
+        }
+    }
 }

@@ -15,7 +15,10 @@
                 </StackPanel>
             </Grid>
             <Grid ColumnDefinitions="Auto,*,Auto">
-                <ComboBox Width="120" ItemsSource="{Binding StatusFilter}" SelectedItem="{Binding SelectedStatus}" />
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <ComboBox Width="110" ItemsSource="{Binding StatusFilter}" SelectedItem="{Binding SelectedStatus}" />
+                    <ComboBox Width="110" ItemsSource="{Binding DueDayFilter}" SelectedItem="{Binding SelectedDueDay}" />
+                </StackPanel>
                 <TextBlock Grid.Column="2" Text="{Binding StatText}" Classes="muted" VerticalAlignment="Center" />
             </Grid>
         </StackPanel>

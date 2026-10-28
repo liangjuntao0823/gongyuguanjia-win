@@ -9,7 +9,7 @@
             <Grid RowDefinitions="Auto,*" Margin="20">
         <StackPanel Grid.Row="0" Spacing="10">
             <Grid ColumnDefinitions="Auto,*,Auto">
-                <TextBlock Text="包租" Classes="pageTitle" VerticalAlignment="Center" />
+                <TextBlock Text="包租管理" Classes="pageTitle" VerticalAlignment="Center" />
                 <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
                     <Button Content="＋ 新增包租合同" Classes="primary" Click="OnAddPayout"><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE710;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="White"/><TextBlock Text="新增包租合同" VerticalAlignment="Center" Foreground="White"/></StackPanel></Button>
                     <Button Content="导出 Excel" Click="OnExportExcel"><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE896;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/><TextBlock Text="导出 Excel" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/></StackPanel></Button>

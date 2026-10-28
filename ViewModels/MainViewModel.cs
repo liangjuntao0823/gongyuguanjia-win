@@ -30,7 +30,6 @@ public partial class MainViewModel : ViewModelBase
         new NavItem { Key = "rent", Title = "收租", Glyph = "" },     // Payment
         new NavItem { Key = "payout", Title = "包租", Glyph = "" },   // Checklist
         new NavItem { Key = "summary", Title = "汇总", Glyph = "" },  // Chart
-        new NavItem { Key = "todos", Title = "待办", Glyph = "" },    // CheckMark
         new NavItem { Key = "settings", Title = "设置", Glyph = "" }, // Setting
     };
 
@@ -55,7 +54,7 @@ public partial class MainViewModel : ViewModelBase
     private bool isCloudConfigured = CosConfig.Load().IsValid;
 
     /// 版本号（v1.0 起，设置页与关于同步展示）
-    public string VersionText => "v1.0.2";
+    public string VersionText => "v1.0.3";
 
     public MainViewModel()
     {

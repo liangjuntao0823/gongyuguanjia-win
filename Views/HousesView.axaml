@@ -11,12 +11,14 @@
                 <TextBlock Text="房源" Classes="pageTitle" VerticalAlignment="Center" />
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Left" Margin="24,0,0,0" VerticalAlignment="Center">
                     <TextBox Width="240" Watermark="搜索房号 / 房东" Text="{Binding SearchText}" />
+                    <ComboBox Width="100" ItemsSource="{Binding TowerOptions}" SelectedItem="{Binding TowerFilter}" />
                     <ComboBox Width="110" ItemsSource="{Binding StatusOptions}" SelectedItem="{Binding StatusFilter}" />
                 </StackPanel>
                 <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
                     <Button Content="批量导入" Click="OnImportHouses" ><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE898;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/><TextBlock Text="批量导入" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/></StackPanel></Button>
+                    <Button Content="本地刷新" Click="OnRefreshLocal" ><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE72C;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/><TextBlock Text="本地刷新" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/></StackPanel></Button>
+                    <Button Content="云端同步" Click="OnSyncMedia" Classes=""><StackPanel Orientation="Horizontal" Spacing="5"><TextBlock Text="&#xE895;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/><TextBlock Text="云端同步" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/></StackPanel></Button>
                     <Button Content="＋ 新增房源" Classes="primary" Click="OnAddHouse"><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE710;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="White"/><TextBlock Text="新增房源" VerticalAlignment="Center" Foreground="White"/></StackPanel></Button>
-                    <Button Content="同步媒体" Click="OnSyncMedia" Classes=""><StackPanel Orientation="Horizontal" Spacing="5"><TextBlock Text="&#xE895;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/><TextBlock Text="同步媒体" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/></StackPanel></Button>
                 </StackPanel>
             </Grid>
 
