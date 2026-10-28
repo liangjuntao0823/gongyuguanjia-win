@@ -2,3 +2,4 @@ bin/
 obj/
 *.user
 .vs/
+发布/

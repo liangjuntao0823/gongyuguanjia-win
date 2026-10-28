@@ -15,7 +15,7 @@ public partial class App : Application
     {
         AvaloniaXamlLoader.Load(this);
         AppDb.Initialize();
-        ThemeManager.Apply(Settings.Get("themeMode", "system"));
+        ThemeManager.ApplySaved();
     }
 
     public override void OnFrameworkInitializationCompleted()

@@ -1,0 +1,69 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="ApartmentManagerWin.Views.TerminateDialog"
+        Title="退租登记" Width="520" Height="520"
+        WindowStartupLocation="CenterOwner" CanResize="False"
+        Background="{DynamicResource PageBackground}">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="20" Spacing="10">
+        <TextBlock x:Name="TitleText" Classes="pageTitle" />
+        <StackPanel>
+            <TextBlock Text="退租日期" Classes="muted" />
+            <DatePicker x:Name="TermDatePicker" />
+        </StackPanel>
+        <StackPanel>
+            <TextBlock Text="退租原因" Classes="muted" />
+            <ComboBox x:Name="ReasonBox">
+                <ComboBox.Items>
+                    <ComboBoxItem Content="合同到期" />
+                    <ComboBoxItem Content="租客提前退租" />
+                    <ComboBoxItem Content="房东收回" />
+                    <ComboBoxItem Content="转租" />
+                    <ComboBoxItem Content="其他" />
+                </ComboBox.Items>
+            </ComboBox>
+        </StackPanel>
+        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+            <StackPanel>
+                <TextBlock Text="押金退还状态" Classes="muted" />
+                <ComboBox x:Name="DepositBox">
+                    <ComboBox.Items>
+                        <ComboBoxItem Content="已全额退还" />
+                        <ComboBoxItem Content="部分退还" />
+                        <ComboBoxItem Content="未退还" />
+                        <ComboBoxItem Content="押金抵扣" />
+                    </ComboBox.Items>
+                </ComboBox>
+            </StackPanel>
+            <StackPanel Grid.Column="1">
+                <TextBlock Text="房间损坏情况" Classes="muted" />
+                <TextBox x:Name="DamageBox" Watermark="选填" />
+            </StackPanel>
+        </Grid>
+        <StackPanel>
+            <TextBlock Text="水电结算状态" Classes="muted" />
+            <ComboBox x:Name="UtilityBox">
+                <ComboBox.Items>
+                    <ComboBoxItem Content="已结清" />
+                    <ComboBoxItem Content="未结清" />
+                </ComboBox.Items>
+            </ComboBox>
+        </StackPanel>
+        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+            <StackPanel>
+                <TextBlock Text="经办人" Classes="muted" />
+                <TextBox x:Name="PersonBox" Watermark="选填" />
+            </StackPanel>
+            <StackPanel Grid.Column="1">
+                <TextBlock Text="联系电话" Classes="muted" />
+                <TextBox x:Name="PhoneBox" Watermark="选填" />
+            </StackPanel>
+        </Grid>
+        <TextBlock x:Name="ErrorText" Foreground="{DynamicResource DangerBrush}" Classes="muted" />
+        <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right">
+            <Button Content="取消" Click="OnCancel" Classes="ghost" />
+            <Button Content="确认退租" Click="OnSave" Classes="primary" />
+        </StackPanel>
+    </StackPanel>
+    </ScrollViewer>
+</Window>

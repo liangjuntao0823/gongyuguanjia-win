@@ -20,29 +20,29 @@
             </Grid>
         </StackPanel>
 
-        <!-- 列表式卡片 -->
+        <!-- 列表式数据行 -->
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,10,0,0">
             <ItemsControl ItemsSource="{Binding Rows}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Classes="card" Margin="0,4" Padding="14,10">
-                            <Border.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem Header="查看详情" Click="OnViewDetail" Tag="{Binding Property}" />
-                                    <MenuItem Header="编辑" Click="OnEditProperty" Tag="{Binding Property}" />
-                                    <MenuItem Header="删除" Click="OnDeleteProperty" Tag="{Binding Property}" />
-                                </ContextMenu>
-                            </Border.ContextMenu>
-                            <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto,Auto">
-                                <TextBlock Text="{Binding RoomNumber}" FontSize="15" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" Width="110" />
-                                <TextBlock Grid.Column="1" Text="{Binding UnitType}" Classes="muted" Width="100" />
-                                <TextBlock Grid.Column="2" Text="{Binding Landlord}" Classes="muted" Width="90" />
-                                <TextBlock Grid.Column="3" Text="{Binding Rent}" Foreground="{DynamicResource Accent}" FontWeight="SemiBold" Width="110" />
-                                <TextBlock Grid.Column="4" Text="{Binding DueDay, StringFormat='{}每{0}日收'}" Classes="muted" Width="90" />
-                                <Border Grid.Column="5" CornerRadius="10" Padding="8,3"
-                                        Background="{DynamicResource AccentSoft}">
-                                    <TextBlock Text="{Binding Status}" FontSize="12" Foreground="{DynamicResource Accent}" />
+                        <Border Classes="card" Margin="0,4" Padding="14,10" Background="{DynamicResource CardBackground}">
+                            <Grid ColumnDefinitions="Auto,100,90,110,90,90,*" RowDefinitions="Auto,Auto">
+                                <TextBlock Text="{Binding RoomNumber}" FontSize="15" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" Width="110" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column="1" Text="{Binding UnitType}" Classes="muted" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column="2" Text="{Binding Landlord}" Classes="muted" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column="3" Text="{Binding Rent}" Foreground="{DynamicResource Accent}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column="4" Text="{Binding DueDay, StringFormat='{}每{0}日收'}" Classes="muted" VerticalAlignment="Center" />
+                                <Border Grid.Column="5" CornerRadius="10" Padding="8,3" Background="{DynamicResource AccentSoft}" VerticalAlignment="Center" Width="70">
+                                    <TextBlock Text="{Binding Status}" FontSize="12" Foreground="{DynamicResource Accent}" HorizontalAlignment="Center" />
                                 </Border>
+                                <StackPanel Grid.Column="6" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                    <Button Content="详情" Click="OnViewDetailBtn" Tag="{Binding Property}" Padding="12,5" FontSize="12" />
+                                    <Button Content="编辑" Click="OnEditPropertyBtn" Tag="{Binding Property}" Padding="12,5" FontSize="12" />
+                                    <Button Content="水电结算" Click="OnSettleUtility" Tag="{Binding Property}" Padding="12,5" FontSize="12" />
+                                    <Button Content="退租" Click="OnTerminate" Tag="{Binding Property}" Padding="12,5" FontSize="12" IsVisible="{Binding Property.IsTerminated, Converter={StaticResource InverseBool}}" />
+                                    <Button Content="删除" Click="OnDeletePropertyBtn" Tag="{Binding Property}" Padding="12,5" FontSize="12" Foreground="{DynamicResource DangerBrush}" />
+                                </StackPanel>
+                                <TextBlock Grid.Row="1" Grid.ColumnSpan="7" Text="{Binding Notes}" Classes="muted" FontSize="12" Margin="0,6,0,0" TextTrimming="CharacterEllipsis" />
                             </Grid>
                         </Border>
                     </DataTemplate>

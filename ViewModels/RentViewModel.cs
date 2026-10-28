@@ -17,6 +17,7 @@ public class RentRow
     public int DueDay => Property.RentDueDay;
     public string Type => Property.Type;
     public string Status => Property.IsTerminated ? "已退租" : "在租";
+    public string Notes => Property.Notes;
 }
 
 public partial class RentViewModel : ViewModelBase

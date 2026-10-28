@@ -1,0 +1,67 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="ApartmentManagerWin.Views.UtilitySettleDialog"
+        Title="水电结算" Width="520" Height="560"
+        WindowStartupLocation="CenterOwner" CanResize="False"
+        Background="{DynamicResource PageBackground}">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="20" Spacing="10">
+        <TextBlock x:Name="TitleText" Classes="pageTitle" />
+        <TextBlock Text="水表底数 / 电表底数（用于本期用量自动计算）" Classes="muted" />
+        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+            <StackPanel>
+                <TextBlock Text="水表底数" Classes="muted" />
+                <NumericUpDown x:Name="WaterBaseBox" Minimum="0" Maximum="99999999" Increment="1" FormatString="0.##" />
+            </StackPanel>
+            <StackPanel Grid.Column="1">
+                <TextBlock Text="电表底数" Classes="muted" />
+                <NumericUpDown x:Name="ElectricBaseBox" Minimum="0" Maximum="99999999" Increment="1" FormatString="0.##" />
+            </StackPanel>
+        </Grid>
+        <TextBlock x:Name="BaseSaveText" Foreground="{DynamicResource SuccessBrush}" FontSize="12" />
+
+        <TextBlock Text="本期结算" Classes="sectionTitle" Margin="0,6,0,0" />
+        <Grid ColumnDefinitions="*,*" ColumnSpacing="10" RowSpacing="10">
+            <StackPanel>
+                <TextBlock Text="年份" Classes="muted" />
+                <NumericUpDown x:Name="YearBox" Minimum="2020" Maximum="2100" Increment="1" FormatString="0" />
+            </StackPanel>
+            <StackPanel Grid.Column="1">
+                <TextBlock Text="期数（第几期）" Classes="muted" />
+                <NumericUpDown x:Name="PeriodBox" Minimum="1" Maximum="24" Increment="1" FormatString="0" />
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="本期水量（吨）" Classes="muted" />
+                <NumericUpDown x:Name="WaterUsageBox" Minimum="0" Maximum="99999" Increment="1" FormatString="0.##" />
+            </StackPanel>
+            <StackPanel Grid.Column="1">
+                <TextBlock Text="本期电量（度）" Classes="muted" />
+                <NumericUpDown x:Name="ElectricUsageBox" Minimum="0" Maximum="99999" Increment="1" FormatString="0.##" />
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="水费金额（元）" Classes="muted" />
+                <NumericUpDown x:Name="WaterAmountBox" Minimum="0" Maximum="999999" Increment="10" FormatString="0.##" />
+            </StackPanel>
+            <StackPanel Grid.Column="1">
+                <TextBlock Text="电费金额（元）" Classes="muted" />
+                <NumericUpDown x:Name="ElectricAmountBox" Minimum="0" Maximum="999999" Increment="10" FormatString="0.##" />
+            </StackPanel>
+        </Grid>
+        <TextBlock x:Name="TotalText" Classes="muted" FontWeight="SemiBold" />
+
+        <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right" Margin="0,6,0,0">
+            <Button Content="保存结算" Click="OnSave" Classes="primary" />
+            <Button Content="关闭" Click="OnClose" Classes="ghost" />
+        </StackPanel>
+
+        <TextBlock Text="已结算记录" Classes="sectionTitle" />
+        <ItemsControl x:Name="RecordList">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" Classes="muted" FontSize="12.5" Margin="0,2" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
+    </ScrollViewer>
+</Window>

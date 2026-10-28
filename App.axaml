@@ -6,6 +6,8 @@
 
     <Application.Resources>
         <ResourceDictionary>
+            <local:BoolInverseConverter x:Key="InverseBool" />
+            <local:BoolVisibleConverter x:Key="BoolVisible" />
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
                     <SolidColorBrush x:Key="PageBackground" Color="#F4F5F9" />

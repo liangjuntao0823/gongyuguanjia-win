@@ -47,7 +47,42 @@ public static class BackupService
             ? Directory.EnumerateFiles(DataRoot.BackupsDirectory, "*.zip").OrderByDescending(f => f).ToList()
             : new List<string>();
 
+    /// 按保留份数清理本地旧备份（最新保留，仅删 zip）
+    public static void CleanupOldBackups(int keepCount)
+    {
+        try
+        {
+            if (keepCount <= 0) return;
+            var files = Directory.GetFiles(DataRoot.BackupsDirectory, "*.zip")
+                .OrderByDescending(f => File.GetLastWriteTime(f)).ToList();
+            foreach (var f in files.Skip(keepCount))
+            {
+                try { File.Delete(f); } catch { }
+            }
+        }
+        catch { }
+    }
+
     public static (bool ok, string msg) Restore(string zipPath, bool includeMedia)
+    {
+        // 恢复前自动打包当前数据做安全备份（iOS 语义）；失败自动回滚
+        string safety;
+        try { safety = CreateBackup(false); }
+        catch { safety = ""; }
+        try
+        {
+            var r = RestoreCore(zipPath, includeMedia);
+            if (!r.ok && !string.IsNullOrEmpty(safety)) TryRollback(safety);
+            return r;
+        }
+        catch (Exception ex)
+        {
+            if (!string.IsNullOrEmpty(safety)) TryRollback(safety);
+            return (false, "恢复失败：" + ex.Message);
+        }
+    }
+
+    private static (bool ok, string msg) RestoreCore(string zipPath, bool includeMedia)
     {
         try
         {
@@ -68,8 +103,7 @@ public static class BackupService
                 e.ExtractToFile(target, true);
             }
 
-            // 备份当前，再替换
-            CreateBackup(false);
+            // 替换
             File.Copy(Path.Combine(tmp, "apartment.db"), DataRoot.DbPath, true);
             if (File.Exists(Path.Combine(tmp, "settings.json")))
                 File.Copy(Path.Combine(tmp, "settings.json"), Path.Combine(DataRoot.Directory, "settings.json"), true);
@@ -87,6 +121,18 @@ public static class BackupService
         {
             return (false, "恢复失败：" + ex.Message);
         }
+    }
+
+    private static void TryRollback(string safetyZip)
+    {
+        try
+        {
+            using var zip = ZipFile.OpenRead(safetyZip);
+            var dbEntry = zip.GetEntry("apartment.db");
+            if (dbEntry == null) return;
+            dbEntry.ExtractToFile(DataRoot.DbPath, true);
+        }
+        catch { }
     }
 
     public static void DeleteBackup(string path)
@@ -133,24 +179,5 @@ public static class BackupService
         var ok = await CosService.PutObjectAsync(cfg, key, File.ReadAllBytes(path), "application/zip");
         if (ok) AppDb.AddLog("备份", "云端备份上传", "成功", key);
         return ok;
-    }
-
-    public static async Task<List<string>> ListCloudBackupsAsync()
-    {
-        var cfg = CosConfig.Load();
-        if (!cfg.IsValid) return new List<string>();
-        var keys = await CosService.ListObjectsAsync(cfg, "backup/");
-        return keys.Where(k => k.EndsWith(".zip")).Select(k => k).ToList();
-    }
-
-    public static async Task<bool> DownloadCloudBackupAsync(string key, string targetDir)
-    {
-        var cfg = CosConfig.Load();
-        if (!cfg.IsValid) return false;
-        var data = await CosService.GetObjectAsync(cfg, key);
-        if (data == null) return false;
-        var name = key.Split('/').Last();
-        File.WriteAllBytes(Path.Combine(targetDir, name), data);
-        return true;
     }
 }

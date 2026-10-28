@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using ApartmentManagerWin.Models;
@@ -68,6 +69,18 @@ public partial class HouseEditDialog : Window
         // 房号规则：带 "2-" 前缀为 2 座，否则 1 座（用户设定）
         var tower = roomNo.StartsWith("2-", StringComparison.Ordinal) ? 2 : 1;
         var layout = (LayoutBox.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "";
+
+        // v1.0：重名检测（同一座同一房号不能重复添加；编辑时排除自身）
+        var dup = AppDb.GetHouses(true).FirstOrDefault(x =>
+            x.Id != (_editing?.Id ?? 0) &&
+            x.Tower == tower &&
+            x.RoomNo.Trim() == roomNo &&
+            !x.IsDeleted);
+        if (dup != null)
+        {
+            ErrorText.Text = $"该房号已收录：{(dup.Tower == 2 ? "2-" : "")}{dup.RoomNo}（{dup.Layout}，{dup.Status}）\n同一座同一房号不能重复添加";
+            return;
+        }
 
         var h = _editing ?? new House { MediaRoomKey = roomNo };
         h.RoomNo = roomNo;

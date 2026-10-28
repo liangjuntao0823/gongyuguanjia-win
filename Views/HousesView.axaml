@@ -14,6 +14,7 @@
                     <ComboBox Width="110" ItemsSource="{Binding StatusOptions}" SelectedItem="{Binding StatusFilter}" />
                 </StackPanel>
                 <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
+                    <Button Content="批量导入" Click="OnImportHouses" />
                     <Button Content="＋ 新增房源" Classes="primary" Click="OnAddHouse" />
                     <Button Content="同步媒体" Click="OnSyncMedia" />
                 </StackPanel>
@@ -49,27 +50,41 @@
                     <DataTemplate>
                         <Border Classes="card" Margin="0,4" Padding="14,10"
                                 Background="{DynamicResource CardBackground}">
-                            <Border.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem Header="查看详情" Click="OnViewDetail" Tag="{Binding House}" />
-                                    <MenuItem Header="编辑" Click="OnEditHouse" Tag="{Binding House}" />
-                                    <MenuItem Header="删除" Click="OnDeleteHouse" Tag="{Binding House}" />
-                                </ContextMenu>
-                            </Border.ContextMenu>
-                            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
-                                <!-- 第一行：左边 房号+户型+房东(仅名字)，右边 价格 -->
+                            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
+                                <!-- 第一行：房号 + 状态徽标 + 户型 + 房东 + 媒体标识 -->
                                 <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="8">
                                     <TextBlock Text="{Binding RoomNo}" FontSize="15" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" />
+                                    <Border CornerRadius="9" Padding="7,2" Background="#EAF0FF">
+                                        <Border.Styles>
+                                            <Style Selector="Border">
+                                                <Setter Property="Background" Value="#EAF0FF" />
+                                            </Style>
+                                        </Border.Styles>
+                                        <TextBlock Text="{Binding Status}" FontSize="11.5" Foreground="#2F6BFF" />
+                                    </Border>
                                     <TextBlock Text="{Binding Layout}" Classes="muted" VerticalAlignment="Center" />
                                     <TextBlock Text="{Binding Landlord}" Classes="muted" VerticalAlignment="Center" />
+                                    <Border CornerRadius="9" Padding="7,2" Background="{DynamicResource AccentSoft}" IsVisible="{Binding HasMedia}">
+                                        <TextBlock Text="有实拍图" FontSize="11.5" Foreground="{DynamicResource Accent}" />
+                                    </Border>
                                 </StackPanel>
-                                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Price}" FontSize="15" FontWeight="SemiBold" Foreground="{DynamicResource Accent}" />
-                                <!-- 第二行：左边备注，右边双端标识 -->
-                                <TextBlock Grid.Row="1" Text="{Binding Remark}" Classes="muted" />
-                                <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="8">
-                                    <Border CornerRadius="10" Padding="6,2" Background="{DynamicResource AccentSoft}">
+                                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Price}" FontSize="15" FontWeight="SemiBold" Foreground="{DynamicResource Accent}" VerticalAlignment="Center" />
+
+                                <!-- 第二行：备注 + 云徽标 -->
+                                <Grid Grid.Row="1" ColumnDefinitions="*,Auto">
+                                    <TextBlock Text="{Binding Remark}" Classes="muted" TextTrimming="CharacterEllipsis" />
+                                    <Border Grid.Column="1" CornerRadius="10" Padding="6,2" Background="{DynamicResource AccentSoft}" IsVisible="{Binding IsCloudBadge}" VerticalAlignment="Center">
                                         <TextBlock Text="{Binding CloudBadge}" FontSize="11.5" Foreground="{DynamicResource Accent}" />
                                     </Border>
+                                </Grid>
+
+                                <!-- 第三行：操作区（桌面适配：按钮直接可见，不再藏右键菜单） -->
+                                <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="6" Margin="0,8,0,0" HorizontalAlignment="Left">
+                                    <Button Content="详情" Click="OnViewDetailBtn" Tag="{Binding House}" Padding="12,5" FontSize="12.5" />
+                                    <Button Content="编辑" Click="OnEditHouseBtn" Tag="{Binding House}" Padding="12,5" FontSize="12.5" />
+                                    <Button Content="分享给客户" Click="OnShareMasked" Tag="{Binding House}" Padding="12,5" FontSize="12.5" />
+                                    <Button Content="分享给同事" Click="OnShareFull" Tag="{Binding House}" Padding="12,5" FontSize="12.5" />
+                                    <Button Content="删除" Click="OnDeleteHouseBtn" Tag="{Binding House}" Padding="12,5" FontSize="12.5" Foreground="{DynamicResource DangerBrush}" />
                                 </StackPanel>
                             </Grid>
                         </Border>

@@ -1,0 +1,26 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="ApartmentManagerWin.Views.MiscEditDialog"
+        Title="新增杂项记录" Width="440" Height="320"
+        WindowStartupLocation="CenterOwner" CanResize="False"
+        Background="{DynamicResource PageBackground}">
+    <StackPanel Margin="20" Spacing="12">
+        <TextBlock x:Name="TitleText" Classes="pageTitle" />
+        <StackPanel>
+            <TextBlock Text="日期" Classes="muted" />
+            <DatePicker x:Name="DatePicker" />
+        </StackPanel>
+        <StackPanel>
+            <TextBlock Text="金额（元）" Classes="muted" />
+            <NumericUpDown x:Name="AmountBox" Minimum="0" Maximum="99999999" Increment="50" FormatString="0.##" />
+        </StackPanel>
+        <StackPanel>
+            <TextBlock Text="备注" Classes="muted" />
+            <TextBox x:Name="NoteBox" Watermark="选填" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right">
+            <Button Content="取消" Click="OnCancel" Classes="ghost" />
+            <Button Content="保存" Click="OnSave" Classes="primary" />
+        </StackPanel>
+    </StackPanel>
+</Window>

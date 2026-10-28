@@ -99,6 +99,10 @@ public static class AppDb
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             date TEXT, room_number TEXT, customer TEXT, type TEXT DEFAULT '收租成交',
             amount REAL DEFAULT 0, agent_fee REAL DEFAULT 0, note TEXT,
+            landlord TEXT, unit_type TEXT, lease_start TEXT, lease_end TEXT, lease_duration TEXT,
+            rent REAL DEFAULT 0, deposit REAL DEFAULT 0, prepayment REAL DEFAULT 0,
+            rent_due_day INTEGER, agent_fee_landlord REAL DEFAULT 0, agent_fee_tenant REAL DEFAULT 0,
+            total_fee REAL DEFAULT 0, manager TEXT, source TEXT,
             is_deleted INTEGER DEFAULT 0, deleted_at TEXT, updated_at TEXT
         );
         CREATE TABLE IF NOT EXISTS misc_incomes (
@@ -136,6 +140,31 @@ public static class AppDb
         CREATE INDEX IF NOT EXISTS idx_util_prop ON utility_settlement_records(property_id);
         CREATE INDEX IF NOT EXISTS idx_payout_month ON monthly_payouts(payout_id);
         """);
+
+        // v1.0 迁移：老库 deals 表补充 iOS 对齐字段（列不存在时 ALTER TABLE ADD COLUMN）
+        EnsureColumn(conn, "deals", "landlord", "TEXT");
+        EnsureColumn(conn, "deals", "unit_type", "TEXT");
+        EnsureColumn(conn, "deals", "lease_start", "TEXT");
+        EnsureColumn(conn, "deals", "lease_end", "TEXT");
+        EnsureColumn(conn, "deals", "lease_duration", "TEXT");
+        EnsureColumn(conn, "deals", "rent", "REAL DEFAULT 0");
+        EnsureColumn(conn, "deals", "deposit", "REAL DEFAULT 0");
+        EnsureColumn(conn, "deals", "prepayment", "REAL DEFAULT 0");
+        EnsureColumn(conn, "deals", "rent_due_day", "INTEGER");
+        EnsureColumn(conn, "deals", "agent_fee_landlord", "REAL DEFAULT 0");
+        EnsureColumn(conn, "deals", "agent_fee_tenant", "REAL DEFAULT 0");
+        EnsureColumn(conn, "deals", "total_fee", "REAL DEFAULT 0");
+        EnsureColumn(conn, "deals", "manager", "TEXT");
+        EnsureColumn(conn, "deals", "source", "TEXT");
+    }
+
+    private static void EnsureColumn(SqliteConnection conn, string table, string column, string type)
+    {
+        using var check = conn.CreateCommand();
+        check.CommandText = $"SELECT COUNT(*) FROM pragma_table_info('{table}') WHERE name='{column}'";
+        var exists = Convert.ToInt64(check.ExecuteScalar()) > 0;
+        if (!exists)
+            Exec(conn, $"ALTER TABLE {table} ADD COLUMN {column} {type}");
     }
 
     private static void Exec(SqliteConnection conn, string sql)
@@ -732,9 +761,49 @@ public static class AppDb
             : "SELECT * FROM deals WHERE is_deleted = 0 ORDER BY date DESC";
         using var r = cmd.ExecuteReader();
         while (r.Read())
-            list.Add(new DealRecord { Id = r.GetInt64(0), Date = DateTime.TryParse(r.GetString(1), out var d) ? d : DateTime.Now, RoomNumber = r.GetString(2), Customer = r.GetString(3), Type = r.GetString(4), Amount = r.GetDecimal(5), AgentFee = r.GetDecimal(6), Note = r.GetString(7), IsDeleted = r.GetInt32(8) == 1, DeletedAt = ParseDate(r, 9), UpdatedAt = ParseDate(r, 10) ?? DateTime.Now });
+        {
+            var d = new DealRecord
+            {
+                Id = r.GetInt64(0),
+                Date = DateTime.TryParse(r.GetString(1), out var dt) ? dt : DateTime.Now,
+                RoomNumber = r.GetString(2),
+                Customer = r.GetString(3),
+                Type = r.GetString(4),
+                Amount = r.GetDecimal(5),
+                AgentFee = r.GetDecimal(6),
+                Note = r.GetString(7),
+                IsDeleted = r.GetInt32(8) == 1,
+                DeletedAt = ParseDate(r, 9),
+                UpdatedAt = ParseDate(r, 10) ?? DateTime.Now,
+            };
+            // v1.0 扩展字段（列可能为 NULL → 安全读取）
+            d.Landlord = ReadStr(r, 11);
+            d.UnitType = ReadStr(r, 12);
+            d.LeaseStart = ReadDate(r, 13) ?? DateTime.Now;
+            d.LeaseEnd = ReadDate(r, 14) ?? DateTime.Now;
+            d.LeaseDuration = ReadStr(r, 15);
+            d.Rent = ReadDec(r, 16);
+            d.Deposit = ReadDec(r, 17);
+            d.Prepayment = ReadDec(r, 18);
+            d.RentDueDay = ReadIntOrNull(r, 19);
+            d.AgentFeeLandlord = ReadDec(r, 20);
+            d.AgentFeeTenant = ReadDec(r, 21);
+            d.TotalFee = ReadDec(r, 22);
+            d.Manager = ReadStr(r, 23);
+            d.Source = ReadStr(r, 24);
+            list.Add(d);
+        }
         return list;
     }
+
+    private static string ReadStr(SqliteDataReader r, int i) => r.IsDBNull(i) ? "" : r.GetString(i);
+
+    private static decimal ReadDec(SqliteDataReader r, int i) => r.IsDBNull(i) ? 0m : r.GetDecimal(i);
+
+    private static int? ReadIntOrNull(SqliteDataReader r, int i) => r.IsDBNull(i) ? null : r.GetInt32(i);
+
+    private static DateTime? ReadDate(SqliteDataReader r, int i)
+        => r.IsDBNull(i) ? null : (DateTime.TryParse(r.GetString(i), out var d) ? d : DateTime.Now);
 
     public static long SaveDeal(DealRecord d)
     {
@@ -742,11 +811,11 @@ public static class AppDb
         using var cmd = conn.CreateCommand();
         d.UpdatedAt = DateTime.Now;
         if (d.Id == 0)
-            cmd.CommandText = "INSERT INTO deals (date,room_number,customer,type,amount,agent_fee,note,is_deleted,deleted_at,updated_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)";
+            cmd.CommandText = "INSERT INTO deals (date,room_number,customer,type,amount,agent_fee,note,landlord,unit_type,lease_start,lease_end,lease_duration,rent,deposit,prepayment,rent_due_day,agent_fee_landlord,agent_fee_tenant,total_fee,manager,source,is_deleted,deleted_at,updated_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24)";
         else
         {
-            cmd.CommandText = "UPDATE deals SET date=$1,room_number=$2,customer=$3,type=$4,amount=$5,agent_fee=$6,note=$7,is_deleted=$8,deleted_at=$9,updated_at=$10 WHERE id=$11";
-            cmd.Parameters.AddWithValue("$11", d.Id);
+            cmd.CommandText = "UPDATE deals SET date=$1,room_number=$2,customer=$3,type=$4,amount=$5,agent_fee=$6,note=$7,landlord=$8,unit_type=$9,lease_start=$10,lease_end=$11,lease_duration=$12,rent=$13,deposit=$14,prepayment=$15,rent_due_day=$16,agent_fee_landlord=$17,agent_fee_tenant=$18,total_fee=$19,manager=$20,source=$21,is_deleted=$22,deleted_at=$23,updated_at=$24 WHERE id=$25";
+            cmd.Parameters.AddWithValue("$25", d.Id);
         }
         cmd.Parameters.AddWithValue("$1", d.Date.ToString("o"));
         cmd.Parameters.AddWithValue("$2", d.RoomNumber);
@@ -755,9 +824,23 @@ public static class AppDb
         cmd.Parameters.AddWithValue("$5", d.Amount);
         cmd.Parameters.AddWithValue("$6", d.AgentFee);
         cmd.Parameters.AddWithValue("$7", d.Note);
-        cmd.Parameters.AddWithValue("$8", d.IsDeleted ? 1 : 0);
-        cmd.Parameters.AddWithValue("$9", d.DeletedAt?.ToString("o") ?? (object)DBNull.Value);
-        cmd.Parameters.AddWithValue("$10", d.UpdatedAt.ToString("o"));
+        cmd.Parameters.AddWithValue("$8", d.Landlord);
+        cmd.Parameters.AddWithValue("$9", d.UnitType);
+        cmd.Parameters.AddWithValue("$10", d.LeaseStart.ToString("o"));
+        cmd.Parameters.AddWithValue("$11", d.LeaseEnd.ToString("o"));
+        cmd.Parameters.AddWithValue("$12", d.LeaseDuration);
+        cmd.Parameters.AddWithValue("$13", d.Rent);
+        cmd.Parameters.AddWithValue("$14", d.Deposit);
+        cmd.Parameters.AddWithValue("$15", d.Prepayment);
+        cmd.Parameters.AddWithValue("$16", d.RentDueDay ?? (object)DBNull.Value);
+        cmd.Parameters.AddWithValue("$17", d.AgentFeeLandlord);
+        cmd.Parameters.AddWithValue("$18", d.AgentFeeTenant);
+        cmd.Parameters.AddWithValue("$19", d.TotalFee);
+        cmd.Parameters.AddWithValue("$20", d.Manager);
+        cmd.Parameters.AddWithValue("$21", d.Source);
+        cmd.Parameters.AddWithValue("$22", d.IsDeleted ? 1 : 0);
+        cmd.Parameters.AddWithValue("$23", d.DeletedAt?.ToString("o") ?? (object)DBNull.Value);
+        cmd.Parameters.AddWithValue("$24", d.UpdatedAt.ToString("o"));
         cmd.ExecuteNonQuery();
         if (d.Id == 0) d.Id = LastInsertId(conn);
         return d.Id;
@@ -840,6 +923,57 @@ public static class AppDb
         cmd.Parameters.AddWithValue("$4", m.IsDeleted ? 1 : 0);
         cmd.Parameters.AddWithValue("$5", m.DeletedAt?.ToString("o") ?? (object)DBNull.Value);
         cmd.ExecuteNonQuery();
+    }
+
+    // 杂项软删（回收站）与彻底删除
+    public static void SoftDeleteMiscIncome(long id)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "UPDATE misc_incomes SET is_deleted=1, deleted_at=$1 WHERE id=$2";
+        cmd.Parameters.AddWithValue("$1", DateTime.Now.ToString("o"));
+        cmd.Parameters.AddWithValue("$2", id);
+        cmd.ExecuteNonQuery();
+    }
+
+    public static void SoftDeleteMiscExpense(long id)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "UPDATE misc_expenses SET is_deleted=1, deleted_at=$1 WHERE id=$2";
+        cmd.Parameters.AddWithValue("$1", DateTime.Now.ToString("o"));
+        cmd.Parameters.AddWithValue("$2", id);
+        cmd.ExecuteNonQuery();
+    }
+
+    public static void RestoreMiscIncome(long id)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "UPDATE misc_incomes SET is_deleted=0, deleted_at=NULL WHERE id=$1";
+        cmd.Parameters.AddWithValue("$1", id); cmd.ExecuteNonQuery();
+    }
+
+    public static void RestoreMiscExpense(long id)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "UPDATE misc_expenses SET is_deleted=0, deleted_at=NULL WHERE id=$1";
+        cmd.Parameters.AddWithValue("$1", id); cmd.ExecuteNonQuery();
+    }
+
+    public static void PermanentDeleteMiscIncome(long id)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "DELETE FROM misc_incomes WHERE id=$1"; cmd.Parameters.AddWithValue("$1", id); cmd.ExecuteNonQuery();
+    }
+
+    public static void PermanentDeleteMiscExpense(long id)
+    {
+        using var conn = Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "DELETE FROM misc_expenses WHERE id=$1"; cmd.Parameters.AddWithValue("$1", id); cmd.ExecuteNonQuery();
     }
 
     // ============================================================

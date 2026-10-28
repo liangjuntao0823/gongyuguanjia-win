@@ -17,25 +17,39 @@ public partial class RentView : UserControl
     private void OnAddProperty(object? sender, RoutedEventArgs e)
         => new RentEditDialog().ShowDialog(GetWindow(this));
 
-    private void OnViewDetail(object? sender, RoutedEventArgs e)
+    private void OnViewDetailBtn(object? sender, RoutedEventArgs e)
     {
-        if (sender is MenuItem mi && mi.Tag is Property p)
+        if (sender is Button b && b.Tag is Property p)
             new RentDetailDialog(p).ShowDialog(GetWindow(this));
     }
 
-    private void OnEditProperty(object? sender, RoutedEventArgs e)
+    private void OnEditPropertyBtn(object? sender, RoutedEventArgs e)
     {
-        if (sender is MenuItem mi && mi.Tag is Property p)
+        if (sender is Button b && b.Tag is Property p)
             new RentEditDialog(p).ShowDialog(GetWindow(this));
     }
 
-    private void OnDeleteProperty(object? sender, RoutedEventArgs e)
+    private void OnDeletePropertyBtn(object? sender, RoutedEventArgs e)
     {
-        if (sender is MenuItem mi && mi.Tag is Property p)
+        if (sender is Button b && b.Tag is Property p)
         {
             Vm?.DeleteProperty(p);
             NotifyService.Push("收租删除", $"{p.RoomNumber} 已移入回收站", NotifyKind.Info);
         }
+    }
+
+    // v1.0：水电结算对话框（对齐 iOS 水电工具）
+    private void OnSettleUtility(object? sender, RoutedEventArgs e)
+    {
+        if (sender is Button b && b.Tag is Property p)
+            new UtilitySettleDialog(p).ShowDialog(GetWindow(this));
+    }
+
+    // v1.0：退租登记对话框（对齐 iOS 退租流程）
+    private void OnTerminate(object? sender, RoutedEventArgs e)
+    {
+        if (sender is Button b && b.Tag is Property p)
+            new TerminateDialog(p).ShowDialog(GetWindow(this));
     }
 
     private void OnExportExcel(object? sender, RoutedEventArgs e)

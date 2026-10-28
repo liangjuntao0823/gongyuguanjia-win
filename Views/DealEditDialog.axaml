@@ -1,52 +1,127 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="ApartmentManagerWin.Views.DealEditDialog"
-        Title="新增 / 编辑成交" Width="480" Height="460"
+        Title="新增 / 编辑成交" Width="720" Height="860"
         WindowStartupLocation="CenterOwner" CanResize="False"
         Background="{DynamicResource PageBackground}">
-    <StackPanel Margin="20" Spacing="10">
-        <TextBlock x:Name="TitleText" Classes="pageTitle" />
-        <StackPanel>
-            <TextBlock Text="日期" Classes="muted" />
-            <DatePicker x:Name="DatePicker" />
-        </StackPanel>
-        <StackPanel>
-            <TextBlock Text="房号" Classes="muted" />
-            <TextBox x:Name="RoomBox" Watermark="如 2325 / 2-1006" />
-        </StackPanel>
-        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
-            <StackPanel>
-                <TextBlock Text="客户" Classes="muted" />
-                <TextBox x:Name="CustomerBox" Watermark="选填" />
+    <DockPanel>
+        <TextBlock x:Name="TitleText" Classes="pageTitle" Margin="20,16,20,0" DockPanel.Dock="Top" />
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="20,8,20,20">
+            <StackPanel Spacing="10">
+
+                <TextBlock Text="基础信息" Classes="sectionTitle" />
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                    <StackPanel>
+                        <TextBlock Text="日期" Classes="muted" />
+                        <DatePicker x:Name="DatePicker" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="房号" Classes="muted" />
+                        <TextBox x:Name="RoomBox" Watermark="如 2325 / 2-1006" />
+                    </StackPanel>
+                </Grid>
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                    <StackPanel>
+                        <TextBlock Text="客户（租客）" Classes="muted" />
+                        <TextBox x:Name="CustomerBox" Watermark="选填" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="类型" Classes="muted" />
+                        <ComboBox x:Name="TypeBox">
+                            <ComboBox.Items>
+                                <ComboBoxItem Content="收租成交" />
+                                <ComboBoxItem Content="出租成交" />
+                                <ComboBoxItem Content="中介费" />
+                                <ComboBoxItem Content="其他" />
+                            </ComboBox.Items>
+                        </ComboBox>
+                    </StackPanel>
+                </Grid>
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                    <StackPanel>
+                        <TextBlock Text="房东" Classes="muted" />
+                        <TextBox x:Name="LandlordBox" Watermark="选填" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="户型" Classes="muted" />
+                        <TextBox x:Name="UnitTypeBox" Watermark="单间/一房一厅…" />
+                    </StackPanel>
+                </Grid>
+
+                <TextBlock Text="租赁信息" Classes="sectionTitle" />
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                    <StackPanel>
+                        <TextBlock Text="起租期" Classes="muted" />
+                        <DatePicker x:Name="LeaseStartPicker" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="到期日" Classes="muted" />
+                        <DatePicker x:Name="LeaseEndPicker" />
+                    </StackPanel>
+                </Grid>
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                    <StackPanel>
+                        <TextBlock Text="租期（如 1年/半年）" Classes="muted" />
+                        <TextBox x:Name="LeaseDurationBox" Watermark="选填" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="交租日（1-31）" Classes="muted" />
+                        <NumericUpDown x:Name="DueDayBox" Minimum="1" Maximum="31" Increment="1" FormatString="0" />
+                    </StackPanel>
+                </Grid>
+
+                <TextBlock Text="费用信息" Classes="sectionTitle" />
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                    <StackPanel>
+                        <TextBlock Text="成交金额（元）" Classes="muted" />
+                        <NumericUpDown x:Name="AmountBox" Minimum="0" Maximum="99999999" Increment="100" FormatString="0.##" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="月租金（元）" Classes="muted" />
+                        <NumericUpDown x:Name="RentBox" Minimum="0" Maximum="999999" Increment="50" FormatString="0" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="押金（元）" Classes="muted" />
+                        <NumericUpDown x:Name="DepositBox" Minimum="0" Maximum="999999" Increment="100" FormatString="0" />
+                    </StackPanel>
+                </Grid>
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                    <StackPanel>
+                        <TextBlock Text="预存（元）" Classes="muted" />
+                        <NumericUpDown x:Name="PrepaymentBox" Minimum="0" Maximum="999999" Increment="100" FormatString="0" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="房东中介费（元）" Classes="muted" />
+                        <NumericUpDown x:Name="FeeLandlordBox" Minimum="0" Maximum="999999" Increment="50" FormatString="0" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="租客中介费（元）" Classes="muted" />
+                        <NumericUpDown x:Name="FeeTenantBox" Minimum="0" Maximum="999999" Increment="50" FormatString="0" />
+                    </StackPanel>
+                </Grid>
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                    <StackPanel>
+                        <TextBlock Text="中介费合计（元）" Classes="muted" />
+                        <NumericUpDown x:Name="FeeBox" Minimum="0" Maximum="999999" Increment="50" FormatString="0" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="管理人" Classes="muted" />
+                        <TextBox x:Name="ManagerBox" Watermark="选填" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="客源" Classes="muted" />
+                        <TextBox x:Name="SourceBox" Watermark="朋友/平台/上门…" />
+                    </StackPanel>
+                </Grid>
+
+                <TextBlock Text="备注" Classes="sectionTitle" />
+                <TextBox x:Name="NoteBox" Watermark="选填" Height="60" AcceptsReturn="True" TextWrapping="Wrap" />
+
+                <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right">
+                    <Button Content="取消" Click="OnCancel" Classes="ghost" />
+                    <Button Content="保存" Click="OnSave" Classes="primary" />
+                </StackPanel>
             </StackPanel>
-            <StackPanel Grid.Column="1">
-                <TextBlock Text="类型" Classes="muted" />
-                <ComboBox x:Name="TypeBox">
-                    <ComboBox.Items>
-                        <ComboBoxItem Content="收租成交" />
-                        <ComboBoxItem Content="出租成交" />
-                        <ComboBoxItem Content="中介费" />
-                    </ComboBox.Items>
-                </ComboBox>
-            </StackPanel>
-        </Grid>
-        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
-            <StackPanel>
-                <TextBlock Text="成交金额（元）" Classes="muted" />
-                <NumericUpDown x:Name="AmountBox" Minimum="0" Maximum="99999999" Increment="100" FormatString="0.##" />
-            </StackPanel>
-            <StackPanel Grid.Column="1">
-                <TextBlock Text="中介费（元）" Classes="muted" />
-                <NumericUpDown x:Name="FeeBox" Minimum="0" Maximum="99999999" Increment="50" FormatString="0.##" />
-            </StackPanel>
-        </Grid>
-        <StackPanel>
-            <TextBlock Text="备注" Classes="muted" />
-            <TextBox x:Name="NoteBox" Watermark="选填" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right">
-            <Button Content="取消" Click="OnCancel" Classes="ghost" />
-            <Button Content="保存" Click="OnSave" Classes="primary" />
-        </StackPanel>
-    </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
 </Window>

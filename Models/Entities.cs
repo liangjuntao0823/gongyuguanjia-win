@@ -165,11 +165,26 @@ public class DealRecord
     public long Id { get; set; }
     public DateTime Date { get; set; }
     public string RoomNumber { get; set; } = "";
-    public string Customer { get; set; } = "";
+    public string Customer { get; set; } = "";        // 租客姓名
     public string Type { get; set; } = "收租成交";     // 收租成交/出租成交/…
     public decimal Amount { get; set; }               // 成交金额
-    public decimal AgentFee { get; set; }             // 中介费
+    public decimal AgentFee { get; set; }             // 中介费（合计）
     public string Note { get; set; } = "";
+    // v1.0：对齐 iOS DealRecord 16 字段
+    public string Landlord { get; set; } = "";        // 房东
+    public string UnitType { get; set; } = "";        // 户型
+    public DateTime LeaseStart { get; set; } = DateTime.Now;  // 起租期
+    public DateTime LeaseEnd { get; set; } = DateTime.Now;    // 到期日
+    public string LeaseDuration { get; set; } = "";   // 租期
+    public decimal Rent { get; set; }                 // 月租金
+    public decimal Deposit { get; set; }              // 押金
+    public decimal Prepayment { get; set; }           // 预存
+    public int? RentDueDay { get; set; }              // 交租日 1-31，null=未设置
+    public decimal AgentFeeLandlord { get; set; }     // 房东中介费
+    public decimal AgentFeeTenant { get; set; }       // 租客中介费
+    public decimal TotalFee { get; set; }             // 总中介费
+    public string Manager { get; set; } = "";         // 管理人
+    public string Source { get; set; } = "";          // 客源
     public bool IsDeleted { get; set; }
     public DateTime? DeletedAt { get; set; }
     public DateTime UpdatedAt { get; set; } = DateTime.Now;
@@ -262,6 +277,8 @@ public class CosConfig
     public string SecretKey { get; set; } = "";
     public string CustomDomain { get; set; } = "";
     public string FunctionUrl { get; set; } = "";
+    /// v1.0：管理后台口令（云函数鉴权 k = SHA256(口令)，iOS 对齐）
+    public string AdminPassword { get; set; } = "";
     public bool IsValid => !string.IsNullOrEmpty(Bucket) && !string.IsNullOrEmpty(SecretId) && !string.IsNullOrEmpty(SecretKey);
 
     public const string SaveKey = "cosConfig";

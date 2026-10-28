@@ -13,6 +13,7 @@ public class NavItem
     public string Key { get; set; } = "";
     public string Title { get; set; } = "";
     public string Glyph { get; set; } = "";
+    public bool IsSelected { get; set; }
 }
 
 public partial class MainViewModel : ViewModelBase
@@ -31,6 +32,9 @@ public partial class MainViewModel : ViewModelBase
         new NavItem { Key = "settings", Title = "设置", Glyph = "⚙" },
     };
 
+    /// 全局提示中心（根层级横幅，任何界面可见可点，iOS v1.76 防卡死等价实现）
+    public ObservableCollection<NotifyItem> NotifyItems { get; } = new();
+
     [ObservableProperty]
     private string currentNavKey = "dashboard";
 
@@ -48,6 +52,9 @@ public partial class MainViewModel : ViewModelBase
     [ObservableProperty]
     private bool isCloudConfigured = CosConfig.Load().IsValid;
 
+    /// 版本号（v1.0 起，设置页与关于同步展示）
+    public string VersionText => "v1.0.0";
+
     public MainViewModel()
     {
         Nav.Current = this;
@@ -58,13 +65,28 @@ public partial class MainViewModel : ViewModelBase
             SyncProgress = p;
             OnPropertyChanged(nameof(IsSyncingVisible));
         };
+        _sync.SyncLog += s => PushNotify("同步", s, NotifyKind.Info);
+        _sync.Completed += () => PushNotify("同步完成", "房源与媒体同步完成", NotifyKind.Success);
         AppDb.DataChanged += () => IsCloudConfigured = CosConfig.Load().IsValid;
+        // 全局横幅：订阅通知（任何页面可点）
+        NotifyService.NotifyRaised += n =>
+        {
+            NotifyItems.Add(n);
+            while (NotifyItems.Count > 6) NotifyItems.RemoveAt(0);
+        };
         NotifyService.CheckReminders();
     }
 
-    /// 页面切换：懒加载创建、切走丢弃（避免 Mac ZStack 常驻卡顿问题）
+    public void PushNotify(string title, string message, NotifyKind kind)
+        => NotifyService.Push(title, message, kind);
+
+    [RelayCommand]
+    private void DismissNotify(NotifyItem item) => NotifyItems.Remove(item);
+
+    /// 页面切换：懒加载创建、切走丢弃（避免常驻卡顿）
     partial void OnCurrentNavKeyChanged(string value)
     {
+        foreach (var n in NavItems) n.IsSelected = n.Key == value;
         CurrentPage = value switch
         {
             "houses" => new HousesViewModel(),
@@ -82,7 +104,9 @@ public partial class MainViewModel : ViewModelBase
     private async Task SyncNowAsync()
     {
         if (_sync.IsRunning) return;
-        await _sync.SyncAsync();
+        // 同步完成后刷新各板块
+        var ok = await _sync.SyncAsync();
+        if (ok) AppDb.NotifyDataChanged();
     }
 
     [RelayCommand]

@@ -4,8 +4,8 @@
         x:Class="ApartmentManagerWin.Views.MainWindow"
         x:DataType="vm:MainViewModel"
         Title="公寓管家"
-        Width="1280" Height="820"
-        MinWidth="1024" MinHeight="680"
+        Width="1360" Height="860"
+        MinWidth="1080" MinHeight="700"
         WindowStartupLocation="CenterScreen">
 
     <DockPanel Background="{DynamicResource PageBackground}">
@@ -19,7 +19,7 @@
                         <TextBlock Text="寓" Foreground="White" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <TextBlock Text="公寓管家" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center" />
-                    <TextBlock Text="Windows 版" Classes="muted" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding VersionText}" Classes="muted" VerticalAlignment="Center" />
                 </StackPanel>
 
                 <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
@@ -30,10 +30,34 @@
             </Grid>
         </Border>
 
+        <!-- 全局提示中心（根层级横幅：任何界面可见、可点击关闭；iOS v1.76 防卡死等价） -->
+        <ItemsControl DockPanel.Dock="Top" ItemsSource="{Binding NotifyItems}" Margin="12,8,12,0">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Margin="0,0,0,6" CornerRadius="10" Padding="14,10"
+                            Background="{DynamicResource CardBackground}"
+                            BorderBrush="{DynamicResource CardBorder}" BorderThickness="1">
+                        <Grid ColumnDefinitions="Auto,*,Auto">
+                            <Border Width="8" Height="8" CornerRadius="4" VerticalAlignment="Center"
+                                    Background="{DynamicResource WarningBrush}" />
+                            <StackPanel Grid.Column="1" Margin="10,0" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Title}" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" />
+                                <TextBlock Text="{Binding Message}" Classes="muted" TextWrapping="Wrap" />
+                            </StackPanel>
+                            <Button Grid.Column="2" Content="✕"
+                                    Command="{Binding $parent[Window].((vm:MainViewModel)DataContext).DismissNotifyCommand}"
+                                    CommandParameter="{Binding}" Padding="8,4" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
         <Grid>
-            <!-- 左侧导航（可缩窄：GridSplitter） -->
+            <!-- 左侧导航 -->
             <Grid ColumnDefinitions="Auto,4,*">
-                <Border Grid.Column="0" Background="{DynamicResource SidebarBackground}" MinWidth="150" MaxWidth="260" Padding="10">
+                <Border Grid.Column="0" Background="{DynamicResource SidebarBackground}" MinWidth="150" MaxWidth="240" Padding="10">
+                    <StackPanel>
                     <ItemsControl ItemsSource="{Binding NavItems}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
@@ -46,15 +70,12 @@
                                         Foreground="{DynamicResource TextPrimary}"
                                         Command="{Binding $parent[Window].((vm:MainViewModel)DataContext).NavigateToCommand}"
                                         CommandParameter="{Binding Key}">
-                                    <Button.Styles>
-                                        <Style Selector="Button">
-                                            <Setter Property="Background" Value="{DynamicResource SidebarBackground}" />
-                                        </Style>
-                                    </Button.Styles>
                                 </Button>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
+                    <TextBlock Text="利保米兰公馆 · 二房东工作台" Classes="muted" FontSize="11" Margin="8,14,8,6" TextWrapping="Wrap" />
+                    </StackPanel>
                 </Border>
 
                 <GridSplitter Grid.Column="1" Width="4" Background="{DynamicResource CardBorder}" HorizontalAlignment="Stretch" />
