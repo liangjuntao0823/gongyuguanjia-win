@@ -44,8 +44,19 @@ public partial class SettingsView : UserControl
         }
     }
 
-    private void OnSyncNow(object? sender, RoutedEventArgs e)
+    private async void OnSyncNow(object? sender, RoutedEventArgs e)
     {
+        // v1.0：同步预览确认（对齐 iOS）
+        if (Nav.Current is ViewModels.MainViewModel mv && mv.SyncService is { } svc)
+        {
+            var preview = await svc.BuildPreviewAsync();
+            if (preview.Count == 0) { NotifyService.Push("同步", "云端无变化", NotifyKind.Info); return; }
+            var win = GetWindow(this);
+            var ok = await ConfirmDialog.ShowAsync(win, "同步预览",
+                "检测到以下变化：\n\n" + string.Join("\n", preview.Take(30)) +
+                (preview.Count > 30 ? $"\n…共 {preview.Count} 项" : "") + "\n\n确认执行同步吗？");
+            if (!ok) { NotifyService.Push("同步", "已取消", NotifyKind.Info); return; }
+        }
         Nav.Current?.SyncNowCommand.Execute(null);
     }
 
@@ -363,4 +374,9 @@ public partial class SettingsView : UserControl
         while (c != null) { if (c is Window w) return w; c = c.Parent; }
         return null;
     }
+    private void OnRefreshCloudShares(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is ViewModels.SettingsViewModel vm) vm.RefreshCloudShares();
+    }
+
 }

@@ -9,6 +9,7 @@
             <Grid ColumnDefinitions="Auto,*,Auto">
                 <TextBlock Text="汇总" Classes="pageTitle" VerticalAlignment="Center" />
                 <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
+                    <CheckBox IsChecked="{Binding HideData}" Content="隐藏数据" VerticalAlignment="Center" />
                     <ComboBox Width="120" ItemsSource="{Binding Years}" SelectedItem="{Binding SelectedYear}" />
                     <ComboBox Width="100" ItemsSource="{Binding Months}" SelectedItem="{Binding SelectedMonth}" />
                 </StackPanel>
@@ -24,7 +25,7 @@
                         <StackPanel>
                             <TextBlock Text="总收入" Classes="muted" />
                             <TextBlock FontSize="34" FontWeight="Bold" Foreground="{DynamicResource SuccessBrush}">
-                                <TextBlock.Text><MultiBinding StringFormat="{}{0:0.##} 元"><Binding Path="TotalIncome"/></MultiBinding></TextBlock.Text>
+                                <TextBlock.Text><Binding Path="TotalIncomeText"/></TextBlock.Text>
                             </TextBlock>
                         </StackPanel>
                     </Border>
@@ -32,7 +33,7 @@
                         <StackPanel>
                             <TextBlock Text="总支出" Classes="muted" />
                             <TextBlock FontSize="34" FontWeight="Bold" Foreground="{DynamicResource DangerBrush}">
-                                <TextBlock.Text><MultiBinding StringFormat="{}{0:0.##} 元"><Binding Path="TotalExpense"/></MultiBinding></TextBlock.Text>
+                                <TextBlock.Text><Binding Path="TotalExpenseText"/></TextBlock.Text>
                             </TextBlock>
                         </StackPanel>
                     </Border>
@@ -40,7 +41,7 @@
                         <StackPanel>
                             <TextBlock Text="利润" Classes="muted" />
                             <TextBlock FontSize="34" FontWeight="Bold" Foreground="{DynamicResource Accent}">
-                                <TextBlock.Text><MultiBinding StringFormat="{}{0:0.##} 元"><Binding Path="Profit"/></MultiBinding></TextBlock.Text>
+                                <TextBlock.Text><Binding Path="ProfitText"/></TextBlock.Text>
                             </TextBlock>
                         </StackPanel>
                     </Border>

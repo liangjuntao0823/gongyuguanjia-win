@@ -32,6 +32,8 @@ public partial class SummaryViewModel : ViewModelBase
     private decimal totalExpense;
     [ObservableProperty]
     private decimal profit;
+    [ObservableProperty]
+    private bool hideData;   // v1.0：对齐 iOS 汇总页隐藏数据开关 "**"
 
     public SummaryViewModel()
     {
@@ -47,6 +49,7 @@ public partial class SummaryViewModel : ViewModelBase
 
     partial void OnSelectedYearChanged(int value) => Refresh();
     partial void OnSelectedMonthChanged(string value) => Refresh();
+    partial void OnHideDataChanged(bool value) => Refresh();
 
     public void Refresh()
     {
@@ -104,5 +107,13 @@ public partial class SummaryViewModel : ViewModelBase
         Profit = TotalIncome - TotalExpense;
         StatText = $"{SelectedYear}{(SelectedMonth == "全部" ? "" : SelectedMonth)} 月度明细";
         OnPropertyChanged(nameof(StatText));
+        OnPropertyChanged(nameof(TotalIncomeText));
+        OnPropertyChanged(nameof(TotalExpenseText));
+        OnPropertyChanged(nameof(ProfitText));
     }
+
+    // v1.0：隐藏数据（对齐 iOS hideData "**"）
+    public string TotalIncomeText => HideData ? "**" : TotalIncome.ToString("0.##") + " 元";
+    public string TotalExpenseText => HideData ? "**" : TotalExpense.ToString("0.##") + " 元";
+    public string ProfitText => HideData ? "**" : Profit.ToString("0.##") + " 元";
 }

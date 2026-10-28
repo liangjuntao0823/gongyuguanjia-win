@@ -36,6 +36,7 @@ public class House
     public DateTime UpdatedAt { get; set; } = DateTime.Now;
     public DateTime LastUpdatedAt { get; set; } = DateTime.Now;
     public bool HasMedia { get; set; }                // 有实拍图（v1.2.4 统计口径）
+    public bool HasVideo { get; set; }                // v1.0：有视频（对齐 iOS hasVideo）
 
     public string DisplayRoomNo => RoomNo;
 }
@@ -69,6 +70,8 @@ public class Property
     public string Notes { get; set; } = "";
     public decimal WaterMeterBase { get; set; }
     public decimal ElectricMeterBase { get; set; }
+    /// v1.0：水电结算频率（对齐 iOS "quarterly"）
+    public string UtilitySettlementFrequency { get; set; } = "quarterly";
 
     public bool IsTerminated { get; set; }
     public DateTime? TerminationDate { get; set; }
@@ -194,6 +197,7 @@ public class MiscIncome
 {
     public long Id { get; set; }
     public DateTime Date { get; set; }
+    public string Item { get; set; } = "";           // v1.0：项目名（对齐 iOS item）
     public decimal Amount { get; set; }
     public string Note { get; set; } = "";
     public bool IsDeleted { get; set; }
@@ -204,6 +208,7 @@ public class MiscExpense
 {
     public long Id { get; set; }
     public DateTime Date { get; set; }
+    public string Item { get; set; } = "";           // v1.0：项目名（对齐 iOS item）
     public decimal Amount { get; set; }
     public string Note { get; set; } = "";
     public bool IsDeleted { get; set; }
@@ -217,6 +222,7 @@ public class TodoItem
     public string Title { get; set; } = "";
     public string Note { get; set; } = "";
     public bool IsCompleted { get; set; }
+    public DateTime? CompletedDate { get; set; }     // v1.0：完成时间（对齐 iOS completedDate）
     public DateTime? DueDate { get; set; }
     public bool HasReminder { get; set; }
     public int SortOrder { get; set; }
@@ -419,4 +425,47 @@ public static class DataRoot
         catch { }
         return total;
     }
+}
+
+/// v1.0：季度水电结算记录（对齐 iOS UtilityQuarterRecord）
+public class UtilityQuarterRecord
+{
+    public long Id { get; set; }
+    public long PropertyId { get; set; }
+    public int Year { get; set; }
+    public int Quarter { get; set; }                 // 1-4
+    public decimal WaterAmount { get; set; }
+    public decimal ElectricAmount { get; set; }
+    public bool IsSettled { get; set; }
+    public DateTime? SettledDate { get; set; }
+}
+
+/// v1.0：包租核算（对齐 iOS PayoutPackageRecord——包租方收入端盈亏）
+public class PayoutPackageRecord
+{
+    public long Id { get; set; }
+    public string RoomNumber { get; set; } = "";
+    public decimal TotalPackageAmount { get; set; }  // 包租总价（向房东包下）
+    public DateTime PackageStart { get; set; }
+    public DateTime PackageEnd { get; set; }
+    public int VacancyDays { get; set; }             // 空置天数
+    public decimal TenantMonthlyRent { get; set; }   // 租客月租金
+    public DateTime RentStart { get; set; }
+    public DateTime RentEnd { get; set; }
+    public string Notes { get; set; } = "";
+    public bool IsDeleted { get; set; }
+    public DateTime? DeletedAt { get; set; }
+
+    /// 包租总天数
+    public int PackageTotalDays => (PackageEnd - PackageStart).Days;
+    /// 日均成本（包租总价 / 总天数）
+    public double DailyCost => PackageTotalDays > 0 ? (double)TotalPackageAmount / PackageTotalDays : 0;
+    /// 空置损失 = 日均成本 × 空置天数
+    public double VacancyCost => DailyCost * VacancyDays;
+    /// 租出天数
+    public int RentedDays => (RentEnd - RentStart).Days;
+    /// 租客租金总收入
+    public double RentalIncome => (double)TenantMonthlyRent * (RentedDays / 30.0);
+    /// 核算利润 = 租金收入 - 包租总价 - 空置损失
+    public double NetProfit => RentalIncome - (double)TotalPackageAmount - VacancyCost;
 }

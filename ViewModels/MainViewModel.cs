@@ -19,6 +19,8 @@ public class NavItem
 public partial class MainViewModel : ViewModelBase
 {
     private readonly SyncService _sync = new();
+    /// v1.0：供子视图做同步预览（对齐 iOS applySyncPreview）
+    public SyncService SyncService => _sync;
 
     public ObservableCollection<NavItem> NavItems { get; } = new()
     {
@@ -53,7 +55,7 @@ public partial class MainViewModel : ViewModelBase
     private bool isCloudConfigured = CosConfig.Load().IsValid;
 
     /// 版本号（v1.0 起，设置页与关于同步展示）
-    public string VersionText => "v1.0.0";
+    public string VersionText => "v1.0.1";
 
     public MainViewModel()
     {

@@ -274,4 +274,22 @@ public static class ExportService
         }
         return null;
     }
+
+    /// v1.0：通用 Excel 导出（列头 + 行数据）
+    public static string ExportGenericExcel(string sheetName, string[] headers, List<object?[]> rows)
+    {
+        var dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "公寓管家导出");
+        Directory.CreateDirectory(dir);
+        var path = Path.Combine(dir, $"{sheetName}_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx");
+        using var wb = new ClosedXML.Excel.XLWorkbook();
+        var ws = wb.Worksheets.Add(sheetName);
+        for (int c = 0; c < headers.Length; c++) ws.Cell(1, c + 1).Value = headers[c];
+        for (int r = 0; r < rows.Count; r++)
+            for (int c = 0; c < rows[r].Length; c++)
+                ws.Cell(r + 2, c + 1).Value = rows[r][c]?.ToString() ?? "";
+        ws.SheetView.FreezeRows(1);
+        ws.Columns().AdjustToContents();
+        wb.SaveAs(path);
+        return path;
+    }
 }

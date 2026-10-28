@@ -39,6 +39,19 @@ public partial class DashboardViewModel : ViewModelBase
     private int openTodoCount;
     [ObservableProperty]
     private decimal monthProfit;
+    // v1.0：对齐 iOS 工作台 KPI 卡
+    [ObservableProperty]
+    private int daysLeftInMonth;      // 本月倒计时天数
+    [ObservableProperty]
+    private int hoursLeftInMonth;     // 本月倒计时小时
+    [ObservableProperty]
+    private int manageCount;          // 管理（托管）套数
+    [ObservableProperty]
+    private int packageCount;         // 包租合同数
+    [ObservableProperty]
+    private int expiringSoonCount;    // 30天内租期到期
+    [ObservableProperty]
+    private decimal monthAgentFee;    // 本月中介费
 
     public List<RentDueCard> RentDueCards { get; private set; } = new();
     public List<RentDueCard> RentDueCards2 { get; private set; } = new();
@@ -65,6 +78,20 @@ public partial class DashboardViewModel : ViewModelBase
         var todos = AppDb.GetTodos();
         OpenTodoCount = todos.Count(t => !t.IsCompleted);
         TodayTodos = todos.Where(t => !t.IsCompleted).OrderBy(t => t.SortOrder).Take(6).ToList();
+
+        // v1.0：本月倒计时（对齐 iOS DashboardView timeRemainingInMonth）
+        var lastDay = new DateTime(now.Year, now.Month, DateTime.DaysInMonth(now.Year, now.Month), 23, 59, 59);
+        var remain = lastDay - now;
+        DaysLeftInMonth = remain.Days;
+        HoursLeftInMonth = remain.Hours;
+
+        // KPI：管理套数 / 包租 / 30天内到期 / 本月中介费
+        ManageCount = props.Count(p => p.Type is "管理" or "托管");
+        PackageCount = AppDb.GetPayouts().Count;
+        ExpiringSoonCount = props.Count(p =>
+            !p.IsTerminated &&
+            DateTime.TryParse(p.LeaseEnd, out var le) && le > DateTime.Today && le <= DateTime.Today.AddDays(30));
+        MonthAgentFee = deals.Sum(d => d.AgentFee);
 
         // 未收租提醒（2 列卡片）
         var today = DateTime.Today;

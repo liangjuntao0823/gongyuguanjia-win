@@ -59,4 +59,60 @@ public partial class PayoutView : UserControl
         while (c != null) { if (c is Window w) return w; c = c.Parent; }
         return null;
     }
+
+    // ============ v1.0：包租核算 ============
+    private void OnAddPackage(object? sender, RoutedEventArgs e)
+    {
+        var dlg = new PayoutPackageEditDialog(null, () => Vm?.RefreshPackages());
+        var win = GetWindow(this);
+        var host = new Window
+        {
+            Width = 520, Height = 460,
+            Title = "新增包租核算",
+            Content = dlg,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+        };
+        host.ShowDialog(win);
+    }
+
+    private void OnEditPackage(object? sender, RoutedEventArgs e)
+    {
+        if (sender is Button b && b.Tag is PayoutPackageRecord rec)
+        {
+            var dlg = new PayoutPackageEditDialog(rec, () => Vm?.RefreshPackages());
+            var host = new Window
+            {
+                Width = 520, Height = 460,
+                Title = "编辑包租核算",
+                Content = dlg,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            };
+            host.ShowDialog(GetWindow(this));
+        }
+    }
+
+    private void OnDeletePackage(object? sender, RoutedEventArgs e)
+    {
+        if (sender is Button b && b.Tag is PayoutPackageRecord rec)
+        {
+            AppDb.SoftDeletePayoutPackage(rec.Id);
+            Vm?.RefreshPackages();
+            NotifyService.Push("核算删除", $"{rec.RoomNumber} 核算已移入回收站", NotifyKind.Info);
+        }
+    }
+
+    private void OnExportPackageExcel(object? sender, RoutedEventArgs e)
+    {
+        if (Vm == null || Vm.PackageRows.Count == 0) return;
+        var rows = Vm.PackageRows.Select(r => new object?[]
+        {
+            r.RoomNumber, r.Record.TotalPackageAmount, r.Record.PackageStart.ToString("yyyy-MM-dd"),
+            r.Record.PackageEnd.ToString("yyyy-MM-dd"), r.Record.VacancyDays, r.Record.TenantMonthlyRent,
+            r.Record.RentStart.ToString("yyyy-MM-dd"), r.Record.RentEnd.ToString("yyyy-MM-dd"),
+            Math.Round(r.Record.DailyCost, 2), Math.Round(r.Record.VacancyCost, 2),
+            Math.Round(r.Record.RentalIncome, 2), Math.Round(r.Record.NetProfit, 2), r.Record.Notes,
+        }).ToList();
+        var path = ExportService.ExportGenericExcel("包租核算", new[] { "房号","包租总价","包租起","包租止","空置天数","租客月租","租客起","租客止","日均成本","空置损失","租客收入","净利润","备注" }, rows);
+        NotifyService.Push("导出成功", path, NotifyKind.Success);
+    }
 }

@@ -4,7 +4,9 @@
              x:Class="ApartmentManagerWin.Views.PayoutView"
              x:DataType="vm:PayoutViewModel">
 
-    <Grid RowDefinitions="Auto,*" Margin="20">
+    <TabControl>
+        <TabItem Header="包租合同">
+            <Grid RowDefinitions="Auto,*" Margin="20">
         <StackPanel Grid.Row="0" Spacing="10">
             <Grid ColumnDefinitions="Auto,*,Auto">
                 <TextBlock Text="包租" Classes="pageTitle" VerticalAlignment="Center" />
@@ -47,4 +49,50 @@
             </ItemsControl>
         </ScrollViewer>
     </Grid>
+        </TabItem>
+        <TabItem Header="包租核算">
+            <Grid RowDefinitions="Auto,*" Margin="20">
+                <StackPanel Grid.Row="0" Spacing="10">
+                    <Grid ColumnDefinitions="Auto,*,Auto">
+                        <TextBlock Text="包租核算" Classes="pageTitle" VerticalAlignment="Center" />
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
+                            <Button Content="＋ 新增核算" Classes="primary" Click="OnAddPackage" />
+                            <Button Content="导出 Excel" Click="OnExportPackageExcel" />
+                        </StackPanel>
+                    </Grid>
+                    <TextBlock Grid.Column="0" Text="{Binding PackageStatText}" Classes="muted" />
+                </StackPanel>
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,10,0,0">
+                    <ItemsControl ItemsSource="{Binding PackageRows}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Classes="card" Margin="0,4" Padding="14,10">
+                                    <StackPanel Spacing="6">
+                                        <Grid ColumnDefinitions="Auto,*,Auto">
+                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                <TextBlock Text="{Binding RoomNumber}" FontSize="16" FontWeight="SemiBold" />
+                                                <TextBlock Text="{Binding PackagePeriod}" Classes="muted" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
+                                                <Button Content="编辑" Classes="smallBtn" Tag="{Binding Record}" Click="OnEditPackage" />
+                                                <Button Content="删除" Classes="smallBtn" Tag="{Binding Record}" Click="OnDeletePackage" />
+                                            </StackPanel>
+                                        </Grid>
+                                        <WrapPanel Orientation="Horizontal">
+                                            <Border Classes="miniPill" Margin="0,0,6,4"><TextBlock Text="{Binding PackageAmountText}" /></Border>
+                                            <Border Classes="miniPill" Margin="0,0,6,4"><TextBlock Text="{Binding DailyCostText}" /></Border>
+                                            <Border Classes="miniPill" Margin="0,0,6,4"><TextBlock Text="{Binding VacancyCostText}" /></Border>
+                                            <Border Classes="miniPill" Margin="0,0,6,4"><TextBlock Text="{Binding RentalIncomeText}" /></Border>
+                                            <Border Classes="miniPill" Margin="0,0,6,4"><TextBlock Text="{Binding NetProfitText}" Foreground="{Binding NetProfitBrush}" /></Border>
+                                        </WrapPanel>
+                                        <TextBlock Text="{Binding Notes}" Classes="muted" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </TabItem>
+    </TabControl>
 </UserControl>

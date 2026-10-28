@@ -1,5 +1,6 @@
 using System.Linq;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -57,7 +58,16 @@ public partial class SettingsViewModel : ViewModelBase
     public ObservableCollection<string> PaletteOptions { get; } = new(ThemeManager.Palettes);
     public ObservableCollection<string> WatermarkPositions { get; } = new() { "右下", "左下", "右上", "左上", "居中" };
 
+    
+    // v1.0：回收站分类筛选（对齐 iOS TrashFilter）
+    public List<string> TrashFilterOptions { get; } = new() { "全部", "房源", "成交", "收租", "包租", "待办", "杂项收入", "杂项支出" };
     [ObservableProperty]
+    private string selectedTrashFilter = "全部";
+    [ObservableProperty]
+    private string trashStatText = "";
+
+    partial void OnSelectedTrashFilterChanged(string value) => RefreshTrash();
+[ObservableProperty]
     private string themeMode = Settings.Get("themeMode", "system") switch
     {
         "day" => "白天",
@@ -74,10 +84,16 @@ public partial class SettingsViewModel : ViewModelBase
     private string leaseReminderDays = Settings.Get("leaseReminderDays", "30");
     [ObservableProperty]
     private string reminderSound = Settings.Get("reminderSound", "默认提示音");
+    public List<string> BackupFrequencies { get; } = new() { "每天", "每周", "每月" };
     [ObservableProperty]
-    private string backupIntervalDays = Settings.Get("autoBackupIntervalDays", "7");
+    private string backupFrequency = Settings.Get("autoBackupFrequency") switch
+    {
+        "week" => "每周",
+        "month" => "每月",
+        _ => "每天",
+    };
     [ObservableProperty]
-    private string backupKeepCount = Settings.Get("autoBackupKeepCount", "5");
+    private string backupRetentionDays = Settings.Get("autoBackupRetentionDays", "7");
     [ObservableProperty]
     private bool autoBackupEnabled = Settings.Get("autoBackupEnabled") == "1";
     [ObservableProperty]
@@ -183,27 +199,29 @@ public partial class SettingsViewModel : ViewModelBase
     public void SaveAutoBackup()
     {
         Settings.Set("autoBackupEnabled", AutoBackupEnabled ? "1" : "0");
-        Settings.Set("autoBackupIntervalDays", BackupIntervalDays);
-        Settings.Set("autoBackupKeepCount", BackupKeepCount);
+        Settings.Set("autoBackupFrequency", BackupFrequency switch { "每周" => "week", "每月" => "month", _ => "day" });
+        Settings.Set("autoBackupRetentionDays", BackupRetentionDays);
         Settings.Set("autoBackupUploadCloud", BackupUploadCloud ? "1" : "0");
     }
 
     public void RefreshTrash()
     {
         TrashItems.Clear();
-        foreach (var h in AppDb.GetHouses(true).Where(h => h.IsDeleted))
+        var filter = SelectedTrashFilter;
+        var match = (string c) => filter == "全部" || c == filter;
+        foreach (var h in AppDb.GetHouses(true).Where(h => h.IsDeleted && match("房源")))
             TrashItems.Add(new TrashRow { Category = "房源", Id = h.Id, Name = h.RoomNo, DeletedAt = h.DeletedAt });
-        foreach (var d in AppDb.GetDeals(true).Where(d => d.IsDeleted))
+        foreach (var d in AppDb.GetDeals(true).Where(d => d.IsDeleted && match("成交")))
             TrashItems.Add(new TrashRow { Category = "成交", Id = d.Id, Name = $"{d.RoomNumber} {d.Customer}", DeletedAt = d.DeletedAt });
-        foreach (var p in AppDb.GetProperties(true).Where(p => p.IsDeleted))
+        foreach (var p in AppDb.GetProperties(true).Where(p => p.IsDeleted && match("收租")))
             TrashItems.Add(new TrashRow { Category = "收租", Id = p.Id, Name = p.RoomNumber, DeletedAt = p.DeletedAt });
-        foreach (var p in AppDb.GetPayouts(true).Where(p => p.IsDeleted))
+        foreach (var p in AppDb.GetPayouts(true).Where(p => p.IsDeleted && match("包租")))
             TrashItems.Add(new TrashRow { Category = "包租", Id = p.Id, Name = p.RoomNumber, DeletedAt = p.DeletedAt });
-        foreach (var t in AppDb.GetTodos(true).Where(t => t.IsDeleted))
+        foreach (var t in AppDb.GetTodos(true).Where(t => t.IsDeleted && match("待办")))
             TrashItems.Add(new TrashRow { Category = "待办", Id = t.Id, Name = t.Title, DeletedAt = t.DeletedAt });
-        foreach (var m in AppDb.GetMiscIncomes(true).Where(m => m.IsDeleted))
+        foreach (var m in AppDb.GetMiscIncomes(true).Where(m => m.IsDeleted && match("杂项收入")))
             TrashItems.Add(new TrashRow { Category = "杂项收入", Id = m.Id, Name = $"{m.Date:yyyy-MM-dd} {m.Amount}元", DeletedAt = m.DeletedAt });
-        foreach (var m in AppDb.GetMiscExpenses(true).Where(m => m.IsDeleted))
+        foreach (var m in AppDb.GetMiscExpenses(true).Where(m => m.IsDeleted && match("杂项支出")))
             TrashItems.Add(new TrashRow { Category = "杂项支出", Id = m.Id, Name = $"{m.Date:yyyy-MM-dd} {m.Amount}元", DeletedAt = m.DeletedAt });
     }
 
@@ -243,6 +261,50 @@ public partial class SettingsViewModel : ViewModelBase
         catch (Exception ex)
         {
             CloudBackups.Add("获取失败：" + ex.Message);
+        }
+    }
+
+    // v1.0：云端分享统计拉取（对齐 iOS do_shares 云函数）+ 数据文件夹大小
+    [ObservableProperty]
+    private string cloudShareSummary = "";
+
+    public async void RefreshCloudShares()
+    {
+        CloudShareSummary = "拉取中…";
+        var cfg = CosConfig.Load();
+        if (!cfg.IsValid || string.IsNullOrEmpty(cfg.FunctionUrl))
+        {
+            CloudShareSummary = "未配置云端/云函数，跳过云端统计";
+            return;
+        }
+        try
+        {
+            var k = RemoteConfigService.PasswordHash();
+            var u = cfg.Username?.Trim() ?? "";
+            var resp = await CosService.CallFunctionAsync(cfg, new Dictionary<string, string>
+            {
+                ["act"] = "sharesGet", ["u"] = u, ["k"] = k
+            });
+            if (string.IsNullOrEmpty(resp)) { CloudShareSummary = "云端未返回统计（云函数不支持 sharesGet 时不影响其他功能）"; return; }
+            CloudShareSummary = resp.Length > 800 ? resp[..800] : resp;
+        }
+        catch (Exception ex) { CloudShareSummary = "获取失败：" + ex.Message; }
+    }
+
+    public string DataFolderSizeText
+    {
+        get
+        {
+            try
+            {
+                long total = 0;
+                if (File.Exists(DataRoot.DbPath)) total += new FileInfo(DataRoot.DbPath).Length;
+                var media = DataRoot.MediaDirectory;
+                if (Directory.Exists(media))
+                    foreach (var f in Directory.EnumerateFiles(media, "*", SearchOption.AllDirectories)) total += new FileInfo(f).Length;
+                return total > 1024 * 1024 ? $"{total / 1024.0 / 1024.0:0.0} MB" : $"{total / 1024.0:0} KB";
+            }
+            catch { return "未知"; }
         }
     }
 }

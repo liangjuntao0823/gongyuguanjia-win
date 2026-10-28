@@ -182,6 +182,79 @@ public class SyncService
         }
     }
 
+    // v1.0：同步预览（对齐 iOS applySyncPreview）——只读对比，不写库/不上传/不删除
+    public async Task<List<string>> BuildPreviewAsync()
+    {
+        if (_running) return new List<string>();
+        _running = true;
+        DiffPreview.Clear();
+        try
+        {
+            var cfg = CosConfig.Load();
+            if (!cfg.IsValid) { DiffPreview.Add("未配置云端，跳过同步"); return DiffPreview; }
+
+            var cloudRooms = await CosService.ListObjectsAsync(cfg, CosService.CloudPrefix, "/");
+            var cloudRoomKeys = cloudRooms
+                .Select(o => o.Name)
+                .Where(n => n.StartsWith(CosService.CloudPrefix, StringComparison.Ordinal))
+                .Select(n => n[CosService.CloudPrefix.Length..])
+                .Where(n => n.EndsWith("/", StringComparison.Ordinal))
+                .Select(n => n.TrimEnd('/'))
+                .Where(n => n.Length > 0 && !n.StartsWith("_", StringComparison.Ordinal))
+                .Distinct()
+                .ToList();
+
+            var cloudLedgers = new ConcurrentDictionary<string, CloudHouseRecord>();
+            var fetchTasks = cloudRoomKeys.Select(async key =>
+            {
+                try
+                {
+                    var data = await CosService.FetchObjectAsync(cfg, CosService.RecordPath(key));
+                    var rec = JsonSerializer.Deserialize<CloudHouseRecord>(data)
+                        ?? throw new InvalidOperationException("云端房源账本解析失败");
+                    if (string.IsNullOrEmpty(rec.roomKey)) rec.roomKey = key;
+                    cloudLedgers[key] = rec;
+                }
+                catch (CosObjectNotFoundException) { }
+            }).ToArray();
+            await Task.WhenAll(fetchTasks);
+
+            var localHouses = AppDb.GetHouses(true).Where(h => !string.IsNullOrEmpty(h.MediaRoomKey)).ToList();
+            var localByRoom = localHouses.GroupBy(h => h.MediaRoomKey).ToDictionary(g => g.Key, g => g.First());
+            var cloudKeys = cloudLedgers.Keys.ToHashSet();
+
+            foreach (var kv in cloudLedgers)
+            {
+                var rec = kv.Value;
+                var key = kv.Key;
+                if (localByRoom.TryGetValue(key, out var local))
+                {
+                    if (ApplyRecordToLocal(rec, local, out var changed))
+                        DiffPreview.Add($"更新 {Display(local)}：{changed}");
+                }
+                else
+                {
+                    DiffPreview.Add($"新增 {Display(HouseFromRecord(rec))}（云端同步）");
+                    if (rec.mediaNames.Count > 0) DiffPreview.Add($"媒体 {Display(HouseFromRecord(rec))}：待下载 {rec.mediaNames.Count} 项");
+                }
+            }
+            foreach (var h in localHouses.Where(h => !cloudKeys.Contains(h.MediaRoomKey)))
+            {
+                if (h.CloudStatus == "both" || h.CloudStatus == "cloud")
+                    DiffPreview.Add($"删除 {Display(h)}（云端已删，本地跟随删除）");
+                else
+                    DiffPreview.Add($"补传 {Display(h)}（仅本地→云端）");
+            }
+            return DiffPreview;
+        }
+        catch (Exception ex)
+        {
+            DiffPreview.Add("预览失败：" + ex.Message);
+            return DiffPreview;
+        }
+        finally { _running = false; }
+    }
+
     // ---------- 账本映射 ----------
 
     public static string Display(House h)

@@ -15,6 +15,7 @@ public class TodoRow
     public string Note => Todo.Note;
     public bool IsCompleted => Todo.IsCompleted;
     public string DueText => Todo.DueDate.HasValue ? Todo.DueDate.Value.ToString("MM-dd") : "";
+    public string CompletedText => Todo.CompletedDate.HasValue ? "完成于 " + Todo.CompletedDate.Value.ToString("MM-dd HH:mm") : "";
     public string ReminderText => Todo.HasReminder ? "⏰" : "";
     public bool HasDue => Todo.DueDate.HasValue;
 }

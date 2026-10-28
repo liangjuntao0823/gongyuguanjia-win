@@ -28,6 +28,7 @@ public partial class RentEditDialog : Window
             DepositBox.Value = editing.Deposit;
             PrepayBox.Value = editing.Prepayment;
             DueDayBox.Value = editing.RentDueDay;
+            FreqBox.SelectedIndex = editing.UtilitySettlementFrequency switch { "monthly" => 1, "custom" => 2, _ => 0 };
             NoteBox.Text = editing.Notes;
             WaterBox.Value = editing.WaterMeterBase;
             ElectricBox.Value = editing.ElectricMeterBase;
@@ -63,6 +64,7 @@ public partial class RentEditDialog : Window
         p.Prepayment = (int)(PrepayBox.Value ?? 0);
         p.RentDueDay = (int)(DueDayBox.Value ?? 1);
         p.Notes = NoteBox.Text?.Trim() ?? "";
+        p.UtilitySettlementFrequency = FreqBox.SelectedIndex switch { 1 => "monthly", 2 => "custom", _ => "quarterly" };
         p.WaterMeterBase = WaterBox.Value ?? 0;
         p.ElectricMeterBase = ElectricBox.Value ?? 0;
         p.LeaseStart = StartPicker.SelectedDate?.Date.ToString("yyyy-MM-dd") ?? "";

@@ -140,31 +140,49 @@ public static class BackupService
         try { if (File.Exists(path)) File.Delete(path); } catch { }
     }
 
-    /// 自动备份配置
-    public static (bool enabled, int intervalDays, int keepCount, bool uploadCloud) GetAutoBackup()
+    /// 自动备份配置（v1.0：对齐 iOS——每天/每周/每月 + 保留天数，默认 7 天）
+    public static (bool enabled, string frequency, int retentionDays, bool uploadCloud) GetAutoBackup()
     {
         return (
             Settings.Get("autoBackupEnabled") == "1",
-            int.TryParse(Settings.Get("autoBackupIntervalDays"), out var d) ? d : 7,
-            int.TryParse(Settings.Get("autoBackupKeepCount"), out var k) ? k : 5,
+            Settings.Get("autoBackupFrequency", "day"),
+            int.TryParse(Settings.Get("autoBackupRetentionDays"), out var r) ? r : 7,
             Settings.Get("autoBackupUploadCloud") == "1");
     }
 
-    public static void SetAutoBackup(bool enabled, int intervalDays, int keepCount, bool uploadCloud)
+    public static void SetAutoBackup(bool enabled, string frequency, int retentionDays, bool uploadCloud)
     {
         Settings.Set("autoBackupEnabled", enabled ? "1" : "0");
-        Settings.Set("autoBackupIntervalDays", intervalDays.ToString());
-        Settings.Set("autoBackupKeepCount", keepCount.ToString());
+        Settings.Set("autoBackupFrequency", frequency);
+        Settings.Set("autoBackupRetentionDays", retentionDays.ToString());
         Settings.Set("autoBackupUploadCloud", uploadCloud ? "1" : "0");
     }
 
     public static bool ShouldRunAutoBackup()
     {
-        var (enabled, intervalDays, _, _) = GetAutoBackup();
+        var (enabled, frequency, _, _) = GetAutoBackup();
         if (!enabled) return false;
+        var gap = frequency switch { "week" => 7, "month" => 30, _ => 1 };
         var last = Settings.Get("autoBackupLastRun", "");
         if (!DateTime.TryParse(last, out var lastTime)) return true;
-        return (DateTime.Now - lastTime).TotalDays >= intervalDays;
+        return (DateTime.Now - lastTime).TotalDays >= gap;
+    }
+
+    /// v1.0：按保留天数清理本地旧备份（对齐 iOS backupRetentionDays）
+    public static void CleanupOldBackupsByDays(int retentionDays)
+    {
+        try
+        {
+            var dir = DataRoot.Directory;
+            if (!Directory.Exists(dir)) return;
+            var files = Directory.GetFiles(dir, "备份_*.zip").OrderByDescending(f => File.GetLastWriteTime(f)).ToList();
+            foreach (var f in files)
+            {
+                if ((DateTime.Now - File.GetLastWriteTime(f)).TotalDays > retentionDays)
+                { try { File.Delete(f); } catch { } }
+            }
+        }
+        catch { }
     }
 
     public static void MarkAutoBackupRun()

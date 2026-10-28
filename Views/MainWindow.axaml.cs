@@ -18,10 +18,10 @@ public partial class MainWindow : Window
     {
         try
         {
-            var (enabled, intervalDays, keepCount, uploadCloud) = BackupService.GetAutoBackup();
+            var (enabled, frequency, retentionDays, uploadCloud) = BackupService.GetAutoBackup();
             if (!enabled || !BackupService.ShouldRunAutoBackup()) return;
             var path = BackupService.CreateBackup(true);
-            BackupService.CleanupOldBackups(keepCount);
+            BackupService.CleanupOldBackupsByDays(retentionDays);
             if (uploadCloud)
             {
                 var cfg = CosConfig.Load();

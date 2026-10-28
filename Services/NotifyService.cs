@@ -27,9 +27,15 @@ public static class NotifyService
             var due = p.RentDueDay;
             var dueDate = new DateTime(today.Year, today.Month, due > DateTime.DaysInMonth(today.Year, today.Month) ? DateTime.DaysInMonth(today.Year, today.Month) : due);
             var delta = (dueDate - today).Days;
-            var lead = int.TryParse(Settings.Get("rentReminderDays"), out var l) ? l : 2;
-            if (delta >= 0 && delta <= lead)
-                Push("收租提醒", $"{p.RoomNumber} 本期租金应于 {dueDate:MM-dd} 缴交（{p.Rent}元）", NotifyKind.Warning);
+            // v1.0：对齐 iOS——逾期或 ≤3 天内提醒（默认 3 天，可配置）
+            var lead = int.TryParse(Settings.Get("rentReminderDays"), out var l) ? l : 3;
+            if (delta <= lead && delta >= -31)
+            {
+                var msg = delta < 0
+                    ? $"{p.RoomNumber} 本期租金已逾期 {-delta} 天（应 {dueDate:MM-dd}，{p.Rent}元）"
+                    : $"{p.RoomNumber} 本期租金应于 {dueDate:MM-dd} 缴交（{p.Rent}元）";
+                Push("收租提醒", msg, NotifyKind.Warning);
+            }
         }
         // 2. 租期到期提醒（30天内到期）
         foreach (var h in AppDb.GetHouses().Where(h => !string.IsNullOrEmpty(h.LeaseEnd)))

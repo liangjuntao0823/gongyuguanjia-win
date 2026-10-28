@@ -7,8 +7,19 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="20" Spacing="14">
 
-            <!-- KPI 行 -->
-            <Grid ColumnDefinitions="*,*,*,*,*,*" Margin="0,4,0,0">
+            <!-- v1.0：本月倒计时（对齐 iOS） -->
+            <Border Classes="card" Padding="14,10" Background="{DynamicResource AccentSoft}">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <TextBlock Text="本月还剩" Classes="sectionTitle" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding DaysLeftInMonth}" FontSize="20" FontWeight="SemiBold" Foreground="{DynamicResource Accent}" />
+                    <TextBlock Text="天" Classes="muted" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding HoursLeftInMonth}" FontSize="20" FontWeight="SemiBold" Foreground="{DynamicResource Accent}" />
+                    <TextBlock Text="小时，加油" Classes="muted" VerticalAlignment="Center" />
+                </StackPanel>
+            </Border>
+
+            <!-- KPI 行（8 卡，对齐 iOS KPI 看板） -->
+            <Grid ColumnDefinitions="*,*,*,*,*,*,*,*" Margin="0,4,0,0">
                 <Border Classes="card" Margin="0,0,8,0" Padding="14,16">
                     <StackPanel>
                         <TextBlock Text="房源总数" Classes="muted" />
@@ -43,12 +54,33 @@
                         </TextBlock>
                     </StackPanel>
                 </Border>
-                <Border Grid.Column="5" Classes="card" Margin="8,0,0,0" Padding="14,16">
+                <Border Grid.Column="5" Classes="card" Margin="8,0" Padding="14,16">
                     <StackPanel>
                         <TextBlock Text="本月利润" Classes="muted" />
                         <TextBlock FontSize="26" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}">
                             <TextBlock.Text><MultiBinding StringFormat="{}{0:0.##} 元"><Binding Path="MonthProfit"/></MultiBinding></TextBlock.Text>
                         </TextBlock>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="6" Classes="card" Margin="8,0" Padding="14,16">
+                    <StackPanel>
+                        <TextBlock Text="本月中介费" Classes="muted" />
+                        <TextBlock FontSize="26" FontWeight="SemiBold" Foreground="{DynamicResource Accent}">
+                            <TextBlock.Text><MultiBinding StringFormat="{}{0:0.##} 元"><Binding Path="MonthAgentFee"/></MultiBinding></TextBlock.Text>
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="7" Classes="card" Margin="8,0,0,0" Padding="14,16">
+                    <StackPanel>
+                        <TextBlock Text="30天内到期" Classes="muted" />
+                        <TextBlock Text="{Binding ExpiringSoonCount}" FontSize="26" FontWeight="SemiBold" Foreground="{DynamicResource DangerBrush}" />
+                        <StackPanel Orientation="Horizontal" Spacing="4" Margin="0,4,0,0">
+                            <TextBlock Text="管理" Classes="muted" FontSize="11" />
+                            <TextBlock Text="{Binding ManageCount}" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" />
+                            <TextBlock Text="套 · 包租" Classes="muted" FontSize="11" />
+                            <TextBlock Text="{Binding PackageCount}" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" />
+                            <TextBlock Text="份" Classes="muted" FontSize="11" />
+                        </StackPanel>
                     </StackPanel>
                 </Border>
             </Grid>
@@ -59,6 +91,7 @@
                     <TextBlock Text="快捷操作" Classes="sectionTitle" VerticalAlignment="Center" Margin="0,0,6,0" />
                     <Button Content="新增房源" Classes="primary" Click="OnAddHouse" />
                     <Button Content="新增成交" Click="OnAddDeal" />
+                    <Button Content="一键收今日到期" Classes="primary" Click="OnQuickCollectToday" />
                     <Button Content="去收租" Click="OnGoRent" />
                     <Button Content="去包租" Click="OnGoPayout" />
                     <Button Content="去待办" Click="OnGoTodos" />

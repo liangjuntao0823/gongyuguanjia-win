@@ -62,6 +62,14 @@
                     <DatePicker x:Name="EndPicker" />
                 </StackPanel>
                 <StackPanel Grid.Row="5">
+                    <TextBlock Text="水电结算频率" Classes="muted" />
+                    <ComboBox x:Name="FreqBox" Grid.Column="1" Margin="0,4,0,0">
+                        <ComboBox.Items>
+                            <ComboBoxItem Content="季度（每3个月）" />
+                            <ComboBoxItem Content="月度（每1个月）" />
+                            <ComboBoxItem Content="自定义周期" />
+                        </ComboBox.Items>
+                    </ComboBox>
                     <TextBlock Text="水表底数" Classes="muted" />
                     <NumericUpDown x:Name="WaterBox" Minimum="0" Maximum="999999" Increment="1" FormatString="0.##" />
                 </StackPanel>

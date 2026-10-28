@@ -1,0 +1,44 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="ApartmentManagerWin.Views.PayoutPackageEditDialog">
+    <StackPanel Margin="24" Spacing="10" Width="420">
+        <TextBlock Text="包租核算" Classes="sectionTitle" />
+        <Grid ColumnDefinitions="130,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+            <TextBlock Text="房号" VerticalAlignment="Center" />
+            <TextBox x:Name="RoomNoBox" Grid.Column="1" />
+
+            <TextBlock Grid.Row="1" Text="包租总价(元)" VerticalAlignment="Center" />
+            <TextBox x:Name="TotalAmountBox" Grid.Row="1" Grid.Column="1" />
+
+            <TextBlock Grid.Row="2" Text="包租起止" VerticalAlignment="Center" />
+            <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Spacing="6">
+                <DatePicker x:Name="PackageStartPicker" />
+                <TextBlock Text="~" VerticalAlignment="Center" />
+                <DatePicker x:Name="PackageEndPicker" />
+            </StackPanel>
+
+            <TextBlock Grid.Row="3" Text="空置天数" VerticalAlignment="Center" />
+            <TextBox x:Name="VacancyDaysBox" Grid.Row="3" Grid.Column="1" />
+
+            <TextBlock Grid.Row="4" Text="租客月租金(元)" VerticalAlignment="Center" />
+            <TextBox x:Name="TenantRentBox" Grid.Row="4" Grid.Column="1" />
+
+            <TextBlock Grid.Row="5" Text="租客起止" VerticalAlignment="Center" />
+            <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal" Spacing="6">
+                <DatePicker x:Name="RentStartPicker" />
+                <TextBlock Text="~" VerticalAlignment="Center" />
+                <DatePicker x:Name="RentEndPicker" />
+            </StackPanel>
+
+            <TextBlock Grid.Row="6" Text="备注" VerticalAlignment="Center" />
+            <TextBox x:Name="NotesBox" Grid.Row="6" Grid.Column="1" />
+
+            <TextBlock Grid.Row="7" Grid.Column="1" Classes="muted" Text="保存后自动核算：总天数 / 日均成本 / 空置损失 / 租客收入 / 净利润" FontSize="11" />
+            <TextBlock x:Name="ErrBox" Grid.Row="8" Foreground="{DynamicResource DangerBrush}" FontSize="11" TextWrapping="Wrap" />
+            <StackPanel Grid.Row="9" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" Margin="0,8,0,0">
+                <Button Content="取消" Click="OnCancel" />
+                <Button Content="保存" Classes="primary" Click="OnSave" />
+            </StackPanel>
+        </Grid>
+    </StackPanel>
+</UserControl>

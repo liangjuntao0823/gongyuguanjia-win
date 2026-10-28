@@ -131,6 +131,30 @@ public static class AppDb
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             time TEXT, category TEXT, action TEXT, result TEXT, detail TEXT, room TEXT
         );
+        CREATE TABLE IF NOT EXISTS utility_quarter_records (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            property_id INTEGER NOT NULL,
+            year INTEGER NOT NULL,
+            quarter INTEGER NOT NULL,
+            water_amount TEXT NOT NULL DEFAULT '0',
+            electric_amount TEXT NOT NULL DEFAULT '0',
+            is_settled INTEGER NOT NULL DEFAULT 0,
+            settled_date TEXT
+        );
+        CREATE TABLE IF NOT EXISTS payout_package_records (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            room_number TEXT NOT NULL DEFAULT '',
+            total_package_amount TEXT NOT NULL DEFAULT '0',
+            package_start TEXT NOT NULL,
+            package_end TEXT NOT NULL,
+            vacancy_days INTEGER NOT NULL DEFAULT 0,
+            tenant_monthly_rent TEXT NOT NULL DEFAULT '0',
+            rent_start TEXT NOT NULL,
+            rent_end TEXT NOT NULL,
+            notes TEXT NOT NULL DEFAULT '',
+            is_deleted INTEGER NOT NULL DEFAULT 0,
+            deleted_at TEXT
+        );
         CREATE TABLE IF NOT EXISTS share_records (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             room_no TEXT, mode TEXT, time TEXT, link TEXT
@@ -222,6 +246,7 @@ public static class AppDb
             UpdatedAt = ParseDate(r, 17) ?? DateTime.Now,
             LastUpdatedAt = ParseDate(r, 18) ?? DateTime.Now,
             HasMedia = r.GetInt32(19) == 1,
+            HasVideo = r.GetInt32(20) == 1,
         };
         return h;
     }
@@ -243,8 +268,8 @@ public static class AppDb
         {
             cmd.CommandText = """
                 INSERT INTO houses (room_no,tower,landlord,layout,price,status,is_rented,is_listed,remark,door_password,
-                    lease_start,lease_end,media_room_key,is_deleted,deleted_at,cloud_status,updated_at,last_updated_at,has_media)
-                VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19)
+                    lease_start,lease_end,media_room_key,is_deleted,deleted_at,cloud_status,updated_at,last_updated_at,has_media,has_video)
+                VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)
                 """;
         }
         else
@@ -252,7 +277,7 @@ public static class AppDb
             cmd.CommandText = """
                 UPDATE houses SET room_no=$1,tower=$2,landlord=$3,layout=$4,price=$5,status=$6,is_rented=$7,is_listed=$8,
                     remark=$9,door_password=$10,lease_start=$11,lease_end=$12,media_room_key=$13,is_deleted=$14,
-                    deleted_at=$15,cloud_status=$16,updated_at=$17,last_updated_at=$18,has_media=$19 WHERE id=$20
+                    deleted_at=$15,cloud_status=$16,updated_at=$17,last_updated_at=$18,has_media=$19,has_video=$20 WHERE id=$21
                 """;
             cmd.Parameters.AddWithValue("$20", h.Id);
         }
@@ -275,6 +300,7 @@ public static class AppDb
         cmd.Parameters.AddWithValue("$17", h.UpdatedAt.ToString("o"));
         cmd.Parameters.AddWithValue("$18", h.LastUpdatedAt.ToString("o"));
         cmd.Parameters.AddWithValue("$19", h.HasMedia ? 1 : 0);
+        cmd.Parameters.AddWithValue("$20", h.HasVideo ? 1 : 0);
         cmd.ExecuteNonQuery();
         if (h.Id == 0) h.Id = LastInsertId(conn);
         return h.Id;
@@ -375,7 +401,8 @@ public static class AppDb
         using var conn = Open();
         using var cmd = conn.CreateCommand();
         cmd.CommandText = """
-            UPDATE houses SET has_media = COALESCE((SELECT COUNT(*) FROM media_items mi WHERE mi.room_key = houses.media_room_key), 0)
+            UPDATE houses SET has_media = COALESCE((SELECT COUNT(*) FROM media_items mi WHERE mi.room_key = houses.media_room_key), 0),
+                has_video = COALESCE((SELECT COUNT(*) FROM media_items mi WHERE mi.room_key = houses.media_room_key AND mi.kind='video'), 0)
             """;
         cmd.ExecuteNonQuery();
     }
@@ -406,11 +433,12 @@ public static class AppDb
             Deposit = r.GetInt32(6), Prepayment = r.GetInt32(7), LeaseStart = r.GetString(8),
             LeaseEnd = r.GetString(9), LeaseDuration = r.GetString(10), RentDueDay = r.GetInt32(11),
             Notes = r.GetString(12), WaterMeterBase = r.GetDecimal(13), ElectricMeterBase = r.GetDecimal(14),
-            IsTerminated = r.GetInt32(15) == 1, TerminationDate = ParseDate(r, 16),
-            TerminationReason = r.GetString(17), DepositRefundStatus = r.GetString(18),
-            RoomDamageStatus = r.GetString(19), UtilitySettlementStatus = r.GetString(20),
-            TerminationPerson = r.GetString(21), TerminationPhone = r.GetString(22),
-            IsDeleted = r.GetInt32(23) == 1, DeletedAt = ParseDate(r, 24),
+            UtilitySettlementFrequency = r.IsDBNull(15) ? "quarterly" : r.GetString(15),
+            IsTerminated = r.GetInt32(16) == 1, TerminationDate = ParseDate(r, 17),
+            TerminationReason = r.GetString(18), DepositRefundStatus = r.GetString(19),
+            RoomDamageStatus = r.GetString(20), UtilitySettlementStatus = r.GetString(21),
+            TerminationPerson = r.GetString(22), TerminationPhone = r.GetString(23),
+            IsDeleted = r.GetInt32(24) == 1, DeletedAt = ParseDate(r, 25),
             UpdatedAt = ParseDate(r, 25) ?? DateTime.Now,
         };
     }
@@ -424,10 +452,10 @@ public static class AppDb
         {
             cmd.CommandText = """
                 INSERT INTO properties (room_number,landlord,unit_type,type,rent,deposit,prepayment,lease_start,lease_end,
-                    lease_duration,rent_due_day,notes,water_meter_base,electric_meter_base,is_terminated,termination_date,
-                    termination_reason,deposit_refund_status,room_damage_status,utility_settlement_status,
-                    termination_person,termination_phone,is_deleted,deleted_at,updated_at)
-                VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25)
+                    lease_duration,rent_due_day,notes,water_meter_base,electric_meter_base,settlement_frequency,
+                    is_terminated,termination_date,termination_reason,deposit_refund_status,room_damage_status,
+                    utility_settlement_status,termination_person,termination_phone,is_deleted,deleted_at,updated_at)
+                VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26)
                 """;
         }
         else
@@ -435,14 +463,15 @@ public static class AppDb
             cmd.CommandText = """
                 UPDATE properties SET room_number=$1,landlord=$2,unit_type=$3,type=$4,rent=$5,deposit=$6,prepayment=$7,
                     lease_start=$8,lease_end=$9,lease_duration=$10,rent_due_day=$11,notes=$12,water_meter_base=$13,
-                    electric_meter_base=$14,is_terminated=$15,termination_date=$16,termination_reason=$17,
-                    deposit_refund_status=$18,room_damage_status=$19,utility_settlement_status=$20,
-                    termination_person=$21,termination_phone=$22,is_deleted=$23,deleted_at=$24,updated_at=$25 WHERE id=$26
+                    electric_meter_base=$14,settlement_frequency=$15,is_terminated=$16,termination_date=$17,
+                    termination_reason=$18,deposit_refund_status=$19,room_damage_status=$20,utility_settlement_status=$21,
+                    termination_person=$22,termination_phone=$23,is_deleted=$24,deleted_at=$25,updated_at=$26 WHERE id=$27
                 """;
             cmd.Parameters.AddWithValue("$26", p.Id);
         }
         AddParams(cmd, 1, p.RoomNumber, p.Landlord, p.UnitType, p.Type, p.Rent, p.Deposit, p.Prepayment,
             p.LeaseStart, p.LeaseEnd, p.LeaseDuration, p.RentDueDay, p.Notes, p.WaterMeterBase, p.ElectricMeterBase,
+            p.UtilitySettlementFrequency,
             p.IsTerminated ? 1 : 0, p.TerminationDate?.ToString("o") ?? (object)DBNull.Value, p.TerminationReason,
             p.DepositRefundStatus, p.RoomDamageStatus, p.UtilitySettlementStatus, p.TerminationPerson,
             p.TerminationPhone, p.IsDeleted ? 1 : 0, p.DeletedAt?.ToString("o") ?? (object)DBNull.Value, p.UpdatedAt.ToString("o"));
@@ -882,7 +911,7 @@ public static class AppDb
         using var cmd = conn.CreateCommand();
         cmd.CommandText = includeDeleted ? "SELECT * FROM misc_incomes ORDER BY date DESC" : "SELECT * FROM misc_incomes WHERE is_deleted=0 ORDER BY date DESC";
         using var r = cmd.ExecuteReader();
-        while (r.Read()) list.Add(new MiscIncome { Id = r.GetInt64(0), Date = DateTime.TryParse(r.GetString(1), out var d) ? d : DateTime.Now, Amount = r.GetDecimal(2), Note = r.GetString(3), IsDeleted = r.GetInt32(4) == 1, DeletedAt = ParseDate(r, 5) });
+        while (r.Read()) list.Add(new MiscIncome { Id = r.GetInt64(0), Date = DateTime.TryParse(r.GetString(1), out var d) ? d : DateTime.Now, Item = r.GetString(2), Amount = r.GetDecimal(3), Note = r.GetString(4), IsDeleted = r.GetInt32(4) == 1, DeletedAt = ParseDate(r, 5) });
         return list;
     }
 
@@ -890,13 +919,14 @@ public static class AppDb
     {
         using var conn = Open();
         using var cmd = conn.CreateCommand();
-        if (m.Id == 0) cmd.CommandText = "INSERT INTO misc_incomes (date,amount,note,is_deleted,deleted_at) VALUES ($1,$2,$3,$4,$5)";
-        else { cmd.CommandText = "UPDATE misc_incomes SET date=$1,amount=$2,note=$3,is_deleted=$4,deleted_at=$5 WHERE id=$6"; cmd.Parameters.AddWithValue("$6", m.Id); }
+        if (m.Id == 0) cmd.CommandText = "INSERT INTO misc_incomes (date,item,amount,note,is_deleted,deleted_at) VALUES ($1,$2,$3,$4,$5,$6)";
+        else { cmd.CommandText = "UPDATE misc_incomes SET date=$1,item=$2,amount=$3,note=$4,is_deleted=$5,deleted_at=$6 WHERE id=$7"; cmd.Parameters.AddWithValue("$7", m.Id); }
         cmd.Parameters.AddWithValue("$1", m.Date.ToString("o"));
-        cmd.Parameters.AddWithValue("$2", m.Amount);
-        cmd.Parameters.AddWithValue("$3", m.Note);
-        cmd.Parameters.AddWithValue("$4", m.IsDeleted ? 1 : 0);
-        cmd.Parameters.AddWithValue("$5", m.DeletedAt?.ToString("o") ?? (object)DBNull.Value);
+        cmd.Parameters.AddWithValue("$2", m.Item);
+        cmd.Parameters.AddWithValue("$3", m.Amount);
+        cmd.Parameters.AddWithValue("$4", m.Note);
+        cmd.Parameters.AddWithValue("$5", m.IsDeleted ? 1 : 0);
+        cmd.Parameters.AddWithValue("$6", m.DeletedAt?.ToString("o") ?? (object)DBNull.Value);
         cmd.ExecuteNonQuery();
     }
 
@@ -907,7 +937,7 @@ public static class AppDb
         using var cmd = conn.CreateCommand();
         cmd.CommandText = includeDeleted ? "SELECT * FROM misc_expenses ORDER BY date DESC" : "SELECT * FROM misc_expenses WHERE is_deleted=0 ORDER BY date DESC";
         using var r = cmd.ExecuteReader();
-        while (r.Read()) list.Add(new MiscExpense { Id = r.GetInt64(0), Date = DateTime.TryParse(r.GetString(1), out var d) ? d : DateTime.Now, Amount = r.GetDecimal(2), Note = r.GetString(3), IsDeleted = r.GetInt32(4) == 1, DeletedAt = ParseDate(r, 5) });
+        while (r.Read()) list.Add(new MiscExpense { Id = r.GetInt64(0), Date = DateTime.TryParse(r.GetString(1), out var d) ? d : DateTime.Now, Item = r.GetString(2), Amount = r.GetDecimal(3), Note = r.GetString(4), IsDeleted = r.GetInt32(4) == 1, DeletedAt = ParseDate(r, 5) });
         return list;
     }
 
@@ -915,13 +945,14 @@ public static class AppDb
     {
         using var conn = Open();
         using var cmd = conn.CreateCommand();
-        if (m.Id == 0) cmd.CommandText = "INSERT INTO misc_expenses (date,amount,note,is_deleted,deleted_at) VALUES ($1,$2,$3,$4,$5)";
-        else { cmd.CommandText = "UPDATE misc_expenses SET date=$1,amount=$2,note=$3,is_deleted=$4,deleted_at=$5 WHERE id=$6"; cmd.Parameters.AddWithValue("$6", m.Id); }
+        if (m.Id == 0) cmd.CommandText = "INSERT INTO misc_expenses (date,item,amount,note,is_deleted,deleted_at) VALUES ($1,$2,$3,$4,$5,$6)";
+        else { cmd.CommandText = "UPDATE misc_expenses SET date=$1,item=$2,amount=$3,note=$4,is_deleted=$5,deleted_at=$6 WHERE id=$7"; cmd.Parameters.AddWithValue("$7", m.Id); }
         cmd.Parameters.AddWithValue("$1", m.Date.ToString("o"));
-        cmd.Parameters.AddWithValue("$2", m.Amount);
-        cmd.Parameters.AddWithValue("$3", m.Note);
-        cmd.Parameters.AddWithValue("$4", m.IsDeleted ? 1 : 0);
-        cmd.Parameters.AddWithValue("$5", m.DeletedAt?.ToString("o") ?? (object)DBNull.Value);
+        cmd.Parameters.AddWithValue("$2", m.Item);
+        cmd.Parameters.AddWithValue("$3", m.Amount);
+        cmd.Parameters.AddWithValue("$4", m.Note);
+        cmd.Parameters.AddWithValue("$5", m.IsDeleted ? 1 : 0);
+        cmd.Parameters.AddWithValue("$6", m.DeletedAt?.ToString("o") ?? (object)DBNull.Value);
         cmd.ExecuteNonQuery();
     }
 
@@ -990,7 +1021,7 @@ public static class AppDb
             : "SELECT * FROM todos WHERE is_deleted=0 ORDER BY is_completed, sort_order, created_at DESC";
         using var r = cmd.ExecuteReader();
         while (r.Read())
-            list.Add(new TodoItem { Id = r.GetInt64(0), Title = r.GetString(1), Note = r.GetString(2), IsCompleted = r.GetInt32(3) == 1, DueDate = ParseDate(r, 4), HasReminder = r.GetInt32(5) == 1, SortOrder = r.GetInt32(6), IsDeleted = r.GetInt32(7) == 1, DeletedAt = ParseDate(r, 8), CreatedAt = ParseDate(r, 9) ?? DateTime.Now });
+            list.Add(new TodoItem { Id = r.GetInt64(0), Title = r.GetString(1), Note = r.GetString(2), IsCompleted = r.GetInt32(3) == 1, CompletedDate = ParseDate(r, 4), DueDate = ParseDate(r, 5), HasReminder = r.GetInt32(6) == 1, SortOrder = r.GetInt32(7), IsDeleted = r.GetInt32(8) == 1, DeletedAt = ParseDate(r, 9), CreatedAt = ParseDate(r, 10) ?? DateTime.Now });
         return list;
     }
 
@@ -998,12 +1029,13 @@ public static class AppDb
     {
         using var conn = Open();
         using var cmd = conn.CreateCommand();
-        if (t.Id == 0) cmd.CommandText = "INSERT INTO todos (title,note,is_completed,due_date,has_reminder,sort_order,is_deleted,deleted_at,created_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)";
-        else { cmd.CommandText = "UPDATE todos SET title=$1,note=$2,is_completed=$3,due_date=$4,has_reminder=$5,sort_order=$6,is_deleted=$7,deleted_at=$8 WHERE id=$9"; cmd.Parameters.AddWithValue("$9", t.Id); }
+        if (t.Id == 0) cmd.CommandText = "INSERT INTO todos (title,note,is_completed,completed_date,due_date,has_reminder,sort_order,is_deleted,deleted_at,created_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)";
+        else { cmd.CommandText = "UPDATE todos SET title=$1,note=$2,is_completed=$3,completed_date=$4,due_date=$5,has_reminder=$6,sort_order=$7,is_deleted=$8,deleted_at=$9 WHERE id=$10"; cmd.Parameters.AddWithValue("$10", t.Id); }
         cmd.Parameters.AddWithValue("$1", t.Title);
         cmd.Parameters.AddWithValue("$2", t.Note);
         cmd.Parameters.AddWithValue("$3", t.IsCompleted ? 1 : 0);
-        cmd.Parameters.AddWithValue("$4", t.DueDate?.ToString("o") ?? (object)DBNull.Value);
+        cmd.Parameters.AddWithValue("$4", t.CompletedDate?.ToString("o") ?? (object)DBNull.Value);
+        cmd.Parameters.AddWithValue("$5", t.DueDate?.ToString("o") ?? (object)DBNull.Value);
         cmd.Parameters.AddWithValue("$5", t.HasReminder ? 1 : 0);
         cmd.Parameters.AddWithValue("$6", t.SortOrder);
         cmd.Parameters.AddWithValue("$7", t.IsDeleted ? 1 : 0);
@@ -1146,4 +1178,109 @@ public static class AppDb
         cmd.CommandText = $"SELECT COALESCE(SUM({column}),0) FROM {table} WHERE is_deleted=0";
         return Convert.ToInt64(cmd.ExecuteScalar());
     }
+
+// ============================================================
+// v1.0：季度水电记录 + 包租核算（对齐 iOS UtilityQuarterRecord / PayoutPackageRecord）
+// ============================================================
+public static List<UtilityQuarterRecord> GetUtilityQuarters(long propertyId)
+{
+    var list = new List<UtilityQuarterRecord>();
+    using var conn = Open();
+    using var cmd = conn.CreateCommand();
+    cmd.CommandText = "SELECT * FROM utility_quarter_records WHERE property_id=$1 ORDER BY year, quarter";
+    cmd.Parameters.AddWithValue("$1", propertyId);
+    using var r = cmd.ExecuteReader();
+    while (r.Read())
+        list.Add(new UtilityQuarterRecord { Id = r.GetInt64(0), PropertyId = r.GetInt64(1), Year = r.GetInt32(2), Quarter = r.GetInt32(3), WaterAmount = r.GetDecimal(4), ElectricAmount = r.GetDecimal(5), IsSettled = r.GetInt32(6) == 1, SettledDate = ParseDate(r, 7) });
+    return list;
+}
+
+public static void SaveUtilityQuarter(UtilityQuarterRecord q)
+{
+    using var conn = Open();
+    using var cmd = conn.CreateCommand();
+    if (q.Id == 0) cmd.CommandText = "INSERT INTO utility_quarter_records (property_id,year,quarter,water_amount,electric_amount,is_settled,settled_date) VALUES ($1,$2,$3,$4,$5,$6,$7)";
+    else { cmd.CommandText = "UPDATE utility_quarter_records SET property_id=$1,year=$2,quarter=$3,water_amount=$4,electric_amount=$5,is_settled=$6,settled_date=$7 WHERE id=$8"; cmd.Parameters.AddWithValue("$8", q.Id); }
+    cmd.Parameters.AddWithValue("$1", q.PropertyId);
+    cmd.Parameters.AddWithValue("$2", q.Year);
+    cmd.Parameters.AddWithValue("$3", q.Quarter);
+    cmd.Parameters.AddWithValue("$4", q.WaterAmount);
+    cmd.Parameters.AddWithValue("$5", q.ElectricAmount);
+    cmd.Parameters.AddWithValue("$6", q.IsSettled ? 1 : 0);
+    cmd.Parameters.AddWithValue("$7", q.SettledDate?.ToString("o") ?? (object)DBNull.Value);
+    cmd.ExecuteNonQuery();
+}
+
+public static List<PayoutPackageRecord> GetPayoutPackages(bool includeDeleted = false)
+{
+    var list = new List<PayoutPackageRecord>();
+    using var conn = Open();
+    using var cmd = conn.CreateCommand();
+    cmd.CommandText = includeDeleted
+        ? "SELECT * FROM payout_package_records ORDER BY package_start"
+        : "SELECT * FROM payout_package_records WHERE is_deleted=0 ORDER BY package_start";
+    using var r = cmd.ExecuteReader();
+    while (r.Read())
+        list.Add(new PayoutPackageRecord
+        {
+            Id = r.GetInt64(0), RoomNumber = r.GetString(1), TotalPackageAmount = r.GetDecimal(2),
+            PackageStart = DateTime.TryParse(r.GetString(3), out var ps) ? ps : DateTime.Now,
+            PackageEnd = DateTime.TryParse(r.GetString(4), out var pe) ? pe : DateTime.Now,
+            VacancyDays = r.GetInt32(5), TenantMonthlyRent = r.GetDecimal(6),
+            RentStart = DateTime.TryParse(r.GetString(7), out var rs) ? rs : DateTime.Now,
+            RentEnd = DateTime.TryParse(r.GetString(8), out var re) ? re : DateTime.Now,
+            Notes = r.GetString(9), IsDeleted = r.GetInt32(10) == 1, DeletedAt = ParseDate(r, 11),
+        });
+    return list;
+}
+
+public static long SavePayoutPackage(PayoutPackageRecord p)
+{
+    using var conn = Open();
+    using var cmd = conn.CreateCommand();
+    if (p.Id == 0) cmd.CommandText = "INSERT INTO payout_package_records (room_number,total_package_amount,package_start,package_end,vacancy_days,tenant_monthly_rent,rent_start,rent_end,notes,is_deleted,deleted_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)";
+    else { cmd.CommandText = "UPDATE payout_package_records SET room_number=$1,total_package_amount=$2,package_start=$3,package_end=$4,vacancy_days=$5,tenant_monthly_rent=$6,rent_start=$7,rent_end=$8,notes=$9,is_deleted=$10,deleted_at=$11 WHERE id=$12"; cmd.Parameters.AddWithValue("$12", p.Id); }
+    cmd.Parameters.AddWithValue("$1", p.RoomNumber);
+    cmd.Parameters.AddWithValue("$2", p.TotalPackageAmount);
+    cmd.Parameters.AddWithValue("$3", p.PackageStart.ToString("o"));
+    cmd.Parameters.AddWithValue("$4", p.PackageEnd.ToString("o"));
+    cmd.Parameters.AddWithValue("$5", p.VacancyDays);
+    cmd.Parameters.AddWithValue("$6", p.TenantMonthlyRent);
+    cmd.Parameters.AddWithValue("$7", p.RentStart.ToString("o"));
+    cmd.Parameters.AddWithValue("$8", p.RentEnd.ToString("o"));
+    cmd.Parameters.AddWithValue("$9", p.Notes);
+    cmd.Parameters.AddWithValue("$10", p.IsDeleted ? 1 : 0);
+    cmd.Parameters.AddWithValue("$11", p.DeletedAt?.ToString("o") ?? (object)DBNull.Value);
+    cmd.ExecuteNonQuery();
+    if (p.Id == 0) p.Id = LastInsertId(conn);
+    return p.Id;
+}
+
+public static void SoftDeletePayoutPackage(long id)
+{
+    using var conn = Open();
+    using var cmd = conn.CreateCommand();
+    cmd.CommandText = "UPDATE payout_package_records SET is_deleted=1, deleted_at=$1 WHERE id=$2";
+    cmd.Parameters.AddWithValue("$1", DateTime.Now.ToString("o"));
+    cmd.Parameters.AddWithValue("$2", id);
+    cmd.ExecuteNonQuery();
+}
+
+public static void RestorePayoutPackage(long id)
+{
+    using var conn = Open();
+    using var cmd = conn.CreateCommand();
+    cmd.CommandText = "UPDATE payout_package_records SET is_deleted=0, deleted_at=NULL WHERE id=$1";
+    cmd.Parameters.AddWithValue("$1", id);
+    cmd.ExecuteNonQuery();
+}
+
+public static void PermanentDeletePayoutPackage(long id)
+{
+    using var conn = Open();
+    using var cmd = conn.CreateCommand();
+    cmd.CommandText = "DELETE FROM payout_package_records WHERE id=$1";
+    cmd.Parameters.AddWithValue("$1", id);
+    cmd.ExecuteNonQuery();
+}
 }

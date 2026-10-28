@@ -111,7 +111,8 @@ public partial class HousesViewModel : ViewModelBase
         var t1 = all.Count(h => h.Tower == 1);
         var t2 = all.Count(h => h.Tower == 2);
         var withMedia = all.Count(h => h.HasMedia);
-        StatText = $"目前已收录房源总计：1座 {t1} 套，2座 {t2} 套 ｜ 带图 {withMedia} 套 ｜ 当前显示 {Rows.Count} 套";
+        var withVideo = AppDb.GetHouses().Count(h => h.HasVideo);
+        StatText = $"目前已收录房源总计：1座 {t1} 套，2座 {t2} 套 ｜ 带图 {withMedia} 套 ｜ 有视频 {withVideo} 套 ｜ 当前显示 {Rows.Count} 套";
         OnPropertyChanged(nameof(StatText));
     }
 
