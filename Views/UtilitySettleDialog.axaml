@@ -51,7 +51,7 @@
 
         <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right" Margin="0,6,0,0">
             <Button Content="保存结算" Click="OnSave" Classes="primary" />
-            <Button Content="关闭" Click="OnClose" Classes="ghost" />
+            <Button Content="关闭" Click="OnClose" Classes="ghost" ><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE711;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/><TextBlock Text="关闭" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/></StackPanel></Button>
         </StackPanel>
 
         <TextBlock Text="已结算记录" Classes="sectionTitle" />

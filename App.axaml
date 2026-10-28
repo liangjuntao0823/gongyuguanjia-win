@@ -10,40 +10,58 @@
             <local:BoolVisibleConverter x:Key="BoolVisible" />
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
-                    <SolidColorBrush x:Key="PageBackground" Color="#F4F5F9" />
+                    <SolidColorBrush x:Key="PageBackground" Color="#F5F5F2" />
+                    <SolidColorBrush x:Key="PageBackgroundAlt" Color="#FCFCFA" />
                     <SolidColorBrush x:Key="CardBackground" Color="#FFFFFF" />
-                    <SolidColorBrush x:Key="SidebarBackground" Color="#EEF0F6" />
-                    <SolidColorBrush x:Key="SidebarHover" Color="#E2E6F0" />
-                    <SolidColorBrush x:Key="SidebarActive" Color="#2F6BFF" />
+                    <SolidColorBrush x:Key="CardBackgroundAlt" Color="#FCFCFA" />
+                    <SolidColorBrush x:Key="SidebarBackground" Color="#20242E" />
+                    <SolidColorBrush x:Key="SidebarHover" Color="#2A2F3B" />
+                    <SolidColorBrush x:Key="SidebarActive" Color="#0F7A4D" />
                     <SolidColorBrush x:Key="SidebarActiveText" Color="#FFFFFF" />
-                    <SolidColorBrush x:Key="TextPrimary" Color="#1F2329" />
-                    <SolidColorBrush x:Key="TextSecondary" Color="#7A8190" />
-                    <SolidColorBrush x:Key="CardBorder" Color="#E5E7EE" />
-                    <SolidColorBrush x:Key="Accent" Color="#2F6BFF" />
-                    <SolidColorBrush x:Key="AccentSoft" Color="#EAF0FF" />
-                    <SolidColorBrush x:Key="SuccessBrush" Color="#22A06B" />
-                    <SolidColorBrush x:Key="WarningBrush" Color="#E8820C" />
-                    <SolidColorBrush x:Key="DangerBrush" Color="#D64545" />
-                    <SolidColorBrush x:Key="DividerBrush" Color="#EDEFF4" />
-                    <SolidColorBrush x:Key="RowHover" Color="#F5F7FC" />
+                    <SolidColorBrush x:Key="SidebarText" Color="#9BA3B2" />
+                    <SolidColorBrush x:Key="TextPrimary" Color="#293130" />
+                    <SolidColorBrush x:Key="TextSecondary" Color="#5C6360" />
+                    <SolidColorBrush x:Key="CardBorder" Color="#E0E3E0" />
+                    <SolidColorBrush x:Key="Accent" Color="#1A7A4D" />
+                    <SolidColorBrush x:Key="AccentDark" Color="#0F5C38" />
+                    <SolidColorBrush x:Key="AccentSoft" Color="#D9EDE4" />
+                    <SolidColorBrush x:Key="SuccessBrush" Color="#1A7A4D" />
+                    <SolidColorBrush x:Key="SuccessSoft" Color="#D9EDE4" />
+                    <SolidColorBrush x:Key="WarningBrush" Color="#F08C1A" />
+                    <SolidColorBrush x:Key="WarningSoft" Color="#FFF3E2" />
+                    <SolidColorBrush x:Key="DangerBrush" Color="#D14038" />
+                    <SolidColorBrush x:Key="DangerSoft" Color="#FDEBEB" />
+                    <SolidColorBrush x:Key="DividerBrush" Color="#E9ECE9" />
+                    <SolidColorBrush x:Key="RowHover" Color="#F1F5F2" />
+                    <SolidColorBrush x:Key="IconBrush" Color="#5C6360" />
+                    <SolidColorBrush x:Key="CardShadow" Color="#14000000" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
-                    <SolidColorBrush x:Key="PageBackground" Color="#17181C" />
-                    <SolidColorBrush x:Key="CardBackground" Color="#23252B" />
-                    <SolidColorBrush x:Key="SidebarBackground" Color="#1E2025" />
-                    <SolidColorBrush x:Key="SidebarHover" Color="#2A2D35" />
-                    <SolidColorBrush x:Key="SidebarActive" Color="#3D7BFF" />
+                    <SolidColorBrush x:Key="PageBackground" Color="#171A1A" />
+                    <SolidColorBrush x:Key="PageBackgroundAlt" Color="#1C1F1F" />
+                    <SolidColorBrush x:Key="CardBackground" Color="#292B2B" />
+                    <SolidColorBrush x:Key="CardBackgroundAlt" Color="#212424" />
+                    <SolidColorBrush x:Key="SidebarBackground" Color="#141616" />
+                    <SolidColorBrush x:Key="SidebarHover" Color="#1E2121" />
+                    <SolidColorBrush x:Key="SidebarActive" Color="#4DB870" />
                     <SolidColorBrush x:Key="SidebarActiveText" Color="#FFFFFF" />
-                    <SolidColorBrush x:Key="TextPrimary" Color="#E8EAEF" />
-                    <SolidColorBrush x:Key="TextSecondary" Color="#9AA1AE" />
-                    <SolidColorBrush x:Key="CardBorder" Color="#33363E" />
-                    <SolidColorBrush x:Key="Accent" Color="#3D7BFF" />
-                    <SolidColorBrush x:Key="AccentSoft" Color="#2A3A5E" />
-                    <SolidColorBrush x:Key="SuccessBrush" Color="#34C27E" />
-                    <SolidColorBrush x:Key="WarningBrush" Color="#F2A03D" />
-                    <SolidColorBrush x:Key="DangerBrush" Color="#E56767" />
-                    <SolidColorBrush x:Key="DividerBrush" Color="#2E3138" />
-                    <SolidColorBrush x:Key="RowHover" Color="#2A2D35" />
+                    <SolidColorBrush x:Key="SidebarText" Color="#858B87" />
+                    <SolidColorBrush x:Key="TextPrimary" Color="#EBEDEB" />
+                    <SolidColorBrush x:Key="TextSecondary" Color="#B8BDB8" />
+                    <SolidColorBrush x:Key="CardBorder" Color="#474D49" />
+                    <SolidColorBrush x:Key="Accent" Color="#4DB870" />
+                    <SolidColorBrush x:Key="AccentDark" Color="#6BBF87" />
+                    <SolidColorBrush x:Key="AccentSoft" Color="#244234" />
+                    <SolidColorBrush x:Key="SuccessBrush" Color="#4DB870" />
+                    <SolidColorBrush x:Key="SuccessSoft" Color="#244234" />
+                    <SolidColorBrush x:Key="WarningBrush" Color="#FFAD3D" />
+                    <SolidColorBrush x:Key="WarningSoft" Color="#3A3220" />
+                    <SolidColorBrush x:Key="DangerBrush" Color="#F26B61" />
+                    <SolidColorBrush x:Key="DangerSoft" Color="#3B2626" />
+                    <SolidColorBrush x:Key="DividerBrush" Color="#333837" />
+                    <SolidColorBrush x:Key="RowHover" Color="#313634" />
+                    <SolidColorBrush x:Key="IconBrush" Color="#B8BDB8" />
+                    <SolidColorBrush x:Key="CardShadow" Color="#00000000" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
@@ -59,8 +77,10 @@
             <Setter Property="FontFamily" Value="Microsoft YaHei UI, Microsoft YaHei, Segoe UI" />
             <Setter Property="FontSize" Value="14" />
         </Style>
+
+        <!-- 页面标题 -->
         <Style Selector="TextBlock.pageTitle">
-            <Setter Property="FontSize" Value="22" />
+            <Setter Property="FontSize" Value="24" />
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
         </Style>
@@ -73,29 +93,118 @@
             <Setter Property="Foreground" Value="{DynamicResource TextSecondary}" />
             <Setter Property="FontSize" Value="12.5" />
         </Style>
+        <!-- 系统图标（Segoe MDL2/Fluent 图标字体） -->
+        <Style Selector="TextBlock.icon">
+            <Setter Property="FontFamily" Value="Segoe MDL2 Assets, Segoe Fluent Icons" />
+            <Setter Property="Foreground" Value="{DynamicResource IconBrush}" />
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+        <Style Selector="TextBlock.iconAccent">
+            <Setter Property="FontFamily" Value="Segoe MDL2 Assets, Segoe Fluent Icons" />
+            <Setter Property="Foreground" Value="{DynamicResource Accent}" />
+            <Setter Property="FontSize" Value="16" />
+        </Style>
+
+        <!-- 按钮 -->
         <Style Selector="Button.primary">
             <Setter Property="Background" Value="{DynamicResource Accent}" />
             <Setter Property="Foreground" Value="White" />
-            <Setter Property="CornerRadius" Value="6" />
-            <Setter Property="Padding" Value="14,7" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="16,8" />
+            <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
         <Style Selector="Button.primary:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource Accent}" />
+            <Setter Property="Background" Value="{DynamicResource AccentDark}" />
         </Style>
         <Style Selector="Button.ghost">
             <Setter Property="Background" Value="Transparent" />
-            <Setter Property="CornerRadius" Value="6" />
-            <Setter Property="Padding" Value="12,7" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="14,8" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
         </Style>
+        <Style Selector="Button.ghost:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource RowHover}" />
+        </Style>
+        <Style Selector="Button.danger">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="14,8" />
+            <Setter Property="Foreground" Value="{DynamicResource DangerBrush}" />
+        </Style>
+        <Style Selector="Button.danger:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource DangerSoft}" />
+        </Style>
+        <Style Selector="Button.toolbar">
+            <Setter Property="Background" Value="{DynamicResource CardBackground}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource CardBorder}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="12,7" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
+        </Style>
+        <Style Selector="Button.toolbar:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource RowHover}" />
+        </Style>
+
+        <!-- 卡片 -->
         <Style Selector="Border.card">
             <Setter Property="Background" Value="{DynamicResource CardBackground}" />
             <Setter Property="BorderBrush" Value="{DynamicResource CardBorder}" />
             <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="BoxShadow" Value="0 2 10 0 #14000000" />
         </Style>
+        <Style Selector="Border.cardHover">
+            <Setter Property="Background" Value="{DynamicResource CardBackground}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource CardBorder}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="12" />
+        </Style>
+        <Style Selector="Border.cardHover:pointerover">
+            <Setter Property="BorderBrush" Value="{DynamicResource Accent}" />
+            <Setter Property="BoxShadow" Value="0 3 14 0 #18000000" />
+        </Style>
+
+        <!-- KPI 卡片 -->
+        <Style Selector="Border.kpi">
+            <Setter Property="Background" Value="{DynamicResource CardBackground}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource CardBorder}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="14" />
+            <Setter Property="BoxShadow" Value="0 2 10 0 #14000000" />
+        </Style>
+        <Style Selector="TextBlock.kpiLabel">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondary}" />
+        </Style>
+        <Style Selector="TextBlock.kpiValue">
+            <Setter Property="FontSize" Value="26" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
+        </Style>
+
+        <!-- 状态徽标 -->
+        <Style Selector="Border.chip">
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Padding" Value="8,3" />
+        </Style>
+
+        <!-- 表单 -->
         <Style Selector="TextBox, NumericUpDown, ComboBox, DatePicker, TimePicker">
-            <Setter Property="CornerRadius" Value="6" />
-            <Setter Property="MinHeight" Value="32" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="MinHeight" Value="34" />
+        </Style>
+
+        <!-- DataGrid 美化 -->
+        <Style Selector="DataGrid">
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Background" Value="{DynamicResource CardBackground}" />
+        </Style>
+        <Style Selector="DataGridCell">
+            <Setter Property="Padding" Value="10,6" />
+        </Style>
+        <Style Selector="DataGridRow:pointerover /template/ Rectangle#BackgroundRectangle">
+            <Setter Property="Fill" Value="{DynamicResource RowHover}" />
         </Style>
     </Application.Styles>
 </Application>

@@ -6,9 +6,9 @@
         Background="{DynamicResource PageBackground}">
     <DockPanel Margin="20">
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right" Margin="0,10,0,0">
-            <Button x:Name="TerminateBtn" Content="退租" Click="OnTerminate" />
-            <Button x:Name="EditBtn" Content="编辑" Click="OnEdit" />
-            <Button Content="关闭" Click="OnClose" Classes="ghost" />
+            <Button x:Name="TerminateBtn" Content="退租" Click="OnTerminate" ><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE711;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/><TextBlock Text="退租" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/></StackPanel></Button>
+            <Button x:Name="EditBtn" Content="编辑" Click="OnEdit" ><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/><TextBlock Text="编辑" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/></StackPanel></Button>
+            <Button Content="关闭" Click="OnClose" Classes="ghost" ><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE711;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/><TextBlock Text="关闭" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/></StackPanel></Button>
         </StackPanel>
 
         <ScrollViewer VerticalScrollBarVisibility="Auto">

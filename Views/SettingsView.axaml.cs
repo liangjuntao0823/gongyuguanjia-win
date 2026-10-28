@@ -379,4 +379,13 @@ public partial class SettingsView : UserControl
         if (DataContext is ViewModels.SettingsViewModel vm) vm.RefreshCloudShares();
     }
 
+
+    // v1.0：打开远程配置管理后台（对齐 Mac RemoteConfigAdminView，跳转云函数管理页）
+    private void OnOpenAdmin(object? sender, RoutedEventArgs e)
+    {
+        var url = ApartmentManagerWin.Models.CosConfig.Load().FunctionUrl;
+        if (string.IsNullOrEmpty(url)) { Services.NotifyService.Push("管理后台", "未配置云函数地址，无法打开", Services.NotifyKind.Info); return; }
+        try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true }); }
+        catch (Exception ex) { Services.NotifyService.Push("管理后台", "打开失败：" + ex.Message, Services.NotifyKind.Warning); }
+    }
 }

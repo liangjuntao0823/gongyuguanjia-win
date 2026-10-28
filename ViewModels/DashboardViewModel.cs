@@ -22,6 +22,13 @@ public class PayoutDueCard
     public int DueDay { get; set; }
     public decimal Amount { get; set; }
 }
+public class ExpiringRow
+{
+    public string RoomNumber { get; set; } = "";
+    public string LeaseEndText { get; set; } = "";
+    public string DaysText { get; set; } = "";
+}
+
 
 public partial class DashboardViewModel : ViewModelBase
 {
@@ -57,11 +64,32 @@ public partial class DashboardViewModel : ViewModelBase
     public List<RentDueCard> RentDueCards2 { get; private set; } = new();
     public List<PayoutDueCard> PayoutDueCards { get; private set; } = new();
     public List<TodoItem> TodayTodos { get; private set; } = new();
+    public List<ExpiringRow> ExpiringSoon { get; private set; } = new();
+
+    [ObservableProperty]
+    private string userTitle = "";
+    [ObservableProperty]
+    private string userSubtitle = "";
 
     public DashboardViewModel() => Refresh();
 
     public void Refresh()
     {
+        UserTitle = Settings.Get("userTitle", "A0-米兰租赁梁涛13288251132");
+        UserSubtitle = Settings.Get("userSubtitle", "选择大于一切，专业省心租好房");
+
+        // v1.0：即将到期（30天内租期到期，对齐 Mac 工作台）
+        ExpiringSoon = AppDb.GetProperties()
+            .Where(p => !p.IsTerminated && DateTime.TryParse(p.LeaseEnd, out _))
+            .Select(p => new ExpiringRow
+            {
+                RoomNumber = p.RoomNumber,
+                LeaseEndText = p.LeaseEnd,
+                DaysText = (DateTime.Parse(p.LeaseEnd) - DateTime.Now).TotalDays <= 30 ? $"{(int)(DateTime.Parse(p.LeaseEnd) - DateTime.Now).TotalDays}天" : ""
+            })
+            .Where(r => r.DaysText != "")
+            .OrderBy(r => r.LeaseEndText)
+            .ToList();
         var houses = AppDb.GetHouses();
         HouseCount = houses.Count;
         PendingRentCount = houses.Count(h => !h.IsRented);
@@ -132,5 +160,13 @@ public partial class DashboardViewModel : ViewModelBase
         OnPropertyChanged(nameof(RentDueCards2));
         OnPropertyChanged(nameof(PayoutDueCards));
         OnPropertyChanged(nameof(TodayTodos));
+    }
+
+    public void SaveUserCard(string t, string sub)
+    {
+        UserTitle = t;
+        UserSubtitle = sub;
+        Settings.Set("userTitle", t);
+        Settings.Set("userSubtitle", sub);
     }
 }

@@ -11,9 +11,9 @@
             <Grid ColumnDefinitions="Auto,*,Auto">
                 <TextBlock Text="包租" Classes="pageTitle" VerticalAlignment="Center" />
                 <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
-                    <Button Content="＋ 新增包租合同" Classes="primary" Click="OnAddPayout" />
-                    <Button Content="导出 Excel" Click="OnExportExcel" />
-                    <Button Content="导出图片" Click="OnExportImage" />
+                    <Button Content="＋ 新增包租合同" Classes="primary" Click="OnAddPayout"><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE710;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="White"/><TextBlock Text="新增包租合同" VerticalAlignment="Center" Foreground="White"/></StackPanel></Button>
+                    <Button Content="导出 Excel" Click="OnExportExcel"><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE896;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/><TextBlock Text="导出 Excel" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/></StackPanel></Button>
+                    <Button Content="导出图片" Click="OnExportImage" ><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE8A7;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/><TextBlock Text="导出图片" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/></StackPanel></Button>
                 </StackPanel>
             </Grid>
             <Grid ColumnDefinitions="Auto,*,Auto">
@@ -56,8 +56,8 @@
                     <Grid ColumnDefinitions="Auto,*,Auto">
                         <TextBlock Text="包租核算" Classes="pageTitle" VerticalAlignment="Center" />
                         <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
-                            <Button Content="＋ 新增核算" Classes="primary" Click="OnAddPackage" />
-                            <Button Content="导出 Excel" Click="OnExportPackageExcel" />
+                            <Button Content="＋ 新增核算" Classes="primary" Click="OnAddPackage"><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE710;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="White"/><TextBlock Text="新增核算" VerticalAlignment="Center" Foreground="White"/></StackPanel></Button>
+                            <Button Content="导出 Excel" Click="OnExportPackageExcel"><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE896;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/><TextBlock Text="导出 Excel" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/></StackPanel></Button>
                         </StackPanel>
                     </Grid>
                     <TextBlock Grid.Column="0" Text="{Binding PackageStatText}" Classes="muted" />
@@ -74,8 +74,8 @@
                                                 <TextBlock Text="{Binding PackagePeriod}" Classes="muted" />
                                             </StackPanel>
                                             <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
-                                                <Button Content="编辑" Classes="smallBtn" Tag="{Binding Record}" Click="OnEditPackage" />
-                                                <Button Content="删除" Classes="smallBtn" Tag="{Binding Record}" Click="OnDeletePackage" />
+                                                <Button Content="编辑" Classes="smallBtn" Tag="{Binding Record}" Click="OnEditPackage" ><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/><TextBlock Text="编辑" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/></StackPanel></Button>
+                                                <Button Content="删除" Classes="smallBtn" Tag="{Binding Record}" Click="OnDeletePackage" ><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE74D;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/><TextBlock Text="删除" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/></StackPanel></Button>
                                             </StackPanel>
                                         </Grid>
                                         <WrapPanel Orientation="Horizontal">

@@ -1,0 +1,17 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:ApartmentManagerWin.ViewModels"
+        x:Class="ApartmentManagerWin.Views.UserCardDialog"
+        Title="编辑用户卡片" Width="420" Height="230"
+        WindowStartupLocation="CenterOwner" CanResize="False">
+    <StackPanel Margin="20" Spacing="12">
+        <TextBlock Text="工作台用户卡片" Classes="pageTitle" />
+        <TextBlock Classes="muted" TextWrapping="Wrap" Text="该卡片显示在工作台顶部，可自定义为你的名字/电话/口号。" />
+        <TextBox x:Name="TitleBox" Watermark="标题（如：A0-米兰租赁梁涛13288251132）" />
+        <TextBox x:Name="SubtitleBox" Watermark="副标题（如：选择大于一切，专业省心租好房）" />
+        <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right">
+            <Button Content="取消" Classes="ghost" Click="OnCancel" ><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE711;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/><TextBlock Text="取消" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/></StackPanel></Button>
+            <Button Content="保存" Classes="primary" Click="OnSave" ><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/><TextBlock Text="保存" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/></StackPanel></Button>
+        </StackPanel>
+    </StackPanel>
+</Window>

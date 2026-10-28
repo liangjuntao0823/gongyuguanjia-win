@@ -24,14 +24,14 @@ public partial class MainViewModel : ViewModelBase
 
     public ObservableCollection<NavItem> NavItems { get; } = new()
     {
-        new NavItem { Key = "dashboard", Title = "工作台", Glyph = "◉" },
-        new NavItem { Key = "houses", Title = "房源", Glyph = "⌂" },
-        new NavItem { Key = "deals", Title = "成交", Glyph = "✓" },
-        new NavItem { Key = "rent", Title = "收租", Glyph = "¥" },
-        new NavItem { Key = "payout", Title = "包租", Glyph = "¤" },
-        new NavItem { Key = "summary", Title = "汇总", Glyph = "Σ" },
-        new NavItem { Key = "todos", Title = "待办", Glyph = "☐" },
-        new NavItem { Key = "settings", Title = "设置", Glyph = "⚙" },
+        new NavItem { Key = "dashboard", Title = "工作台", Glyph = "" },   // Home
+        new NavItem { Key = "houses", Title = "房源", Glyph = "" },   // Home
+        new NavItem { Key = "deals", Title = "成交", Glyph = "" },    // Document
+        new NavItem { Key = "rent", Title = "收租", Glyph = "" },     // Payment
+        new NavItem { Key = "payout", Title = "包租", Glyph = "" },   // Checklist
+        new NavItem { Key = "summary", Title = "汇总", Glyph = "" },  // Chart
+        new NavItem { Key = "todos", Title = "待办", Glyph = "" },    // CheckMark
+        new NavItem { Key = "settings", Title = "设置", Glyph = "" }, // Setting
     };
 
     /// 全局提示中心（根层级横幅，任何界面可见可点，iOS v1.76 防卡死等价实现）
@@ -55,7 +55,7 @@ public partial class MainViewModel : ViewModelBase
     private bool isCloudConfigured = CosConfig.Load().IsValid;
 
     /// 版本号（v1.0 起，设置页与关于同步展示）
-    public string VersionText => "v1.0.1";
+    public string VersionText => "v1.0.2";
 
     public MainViewModel()
     {

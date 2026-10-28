@@ -38,7 +38,7 @@
                                 <!-- 排序按钮在关闭/删除按钮左边 -->
                                 <Button Grid.Column="3" Content="↑" Click="OnMoveUp" Tag="{Binding}" Width="34" Margin="4,0,0,0" />
                                 <Button Grid.Column="4" Content="↓" Click="OnMoveDown" Tag="{Binding}" Width="34" Margin="4,0,0,0" />
-                                <Button Grid.Column="5" Content="编辑" Click="OnEditTodo" Tag="{Binding}" Margin="8,0,0,0" />
+                                <Button Grid.Column="5" Content="编辑" Click="OnEditTodo" Tag="{Binding}" Margin="8,0,0,0" ><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/><TextBlock Text="编辑" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/></StackPanel></Button>
                                 <TextBlock Grid.Column="6" Text="{Binding DueText}" Classes="muted" VerticalAlignment="Center" Width="52" Margin="8,0,0,0" />
                                 <TextBlock Grid.Column="7" Text="{Binding CompletedText}" Classes="muted" VerticalAlignment="Center" Width="110" Margin="8,0,0,0" Foreground="{DynamicResource SuccessBrush}" />
                                 <Button Grid.Column="7" Content="✕" Click="OnDeleteTodo" Tag="{Binding}" Width="34" Margin="8,0,0,0"

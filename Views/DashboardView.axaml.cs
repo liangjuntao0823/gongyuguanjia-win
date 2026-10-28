@@ -66,4 +66,14 @@ public partial class DashboardView : UserControl
         NotifyService.Push("快捷收租", $"已标记 {pending.Count} 套本期租金已收", NotifyKind.Success);
         if (DataContext is DashboardViewModel dv) dv.Refresh();
     }
+
+    private void OnEditUserCard(object? sender, RoutedEventArgs e)
+    {
+        var dlg = new UserCardDialog(DataContext as DashboardViewModel).ShowDialog(GetWindow(this));
+    }
+
+    private void OnAddIncome(object? sender, RoutedEventArgs e) => new MiscEditDialog(true).ShowDialog(GetWindow(this));
+    private void OnAddExpense(object? sender, RoutedEventArgs e) => new MiscEditDialog(false).ShowDialog(GetWindow(this));
+    private void OnAddPayout(object? sender, RoutedEventArgs e) => new PayoutEditDialog().ShowDialog(GetWindow(this));
+    private void OnAddTodo(object? sender, RoutedEventArgs e) => new TodoEditDialog().ShowDialog(GetWindow(this));
 }

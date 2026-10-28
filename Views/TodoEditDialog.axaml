@@ -21,8 +21,8 @@
         </Grid>
         <TextBlock x:Name="ErrorText" Foreground="{DynamicResource DangerBrush}" Classes="muted" />
         <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right">
-            <Button Content="取消" Click="OnCancel" Classes="ghost" />
-            <Button Content="保存" Click="OnSave" Classes="primary" />
+            <Button Content="取消" Click="OnCancel" Classes="ghost" ><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE711;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/><TextBlock Text="取消" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/></StackPanel></Button>
+            <Button Content="保存" Click="OnSave" Classes="primary" ><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/><TextBlock Text="保存" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/></StackPanel></Button>
         </StackPanel>
     </StackPanel>
 </Window>

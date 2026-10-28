@@ -10,10 +10,10 @@
             <Grid ColumnDefinitions="Auto,*,Auto">
                 <TextBlock Text="成交" Classes="pageTitle" VerticalAlignment="Center" />
                 <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
-                    <Button Content="＋ 新增成交" Classes="primary" Click="OnAddDeal" />
-                    <Button Content="导出 Excel" Click="OnExportExcel" />
-                    <Button Content="导出图片" Click="OnExportImage" />
-                    <Button Content="导入 Excel" Click="OnImportExcel" />
+                    <Button Content="＋ 新增成交" Classes="primary" Click="OnAddDeal"><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE710;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="White"/><TextBlock Text="新增成交" VerticalAlignment="Center" Foreground="White"/></StackPanel></Button>
+                    <Button Content="导出 Excel" Click="OnExportExcel" Classes=""><StackPanel Orientation="Horizontal" Spacing="5"><TextBlock Text="&#xE896;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/><TextBlock Text="导出 Excel" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/></StackPanel></Button>
+                    <Button Content="导出图片" Click="OnExportImage" ><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE8A7;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/><TextBlock Text="导出图片" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/></StackPanel></Button>
+                    <Button Content="导入 Excel" Click="OnImportExcel" Classes=""><StackPanel Orientation="Horizontal" Spacing="5"><TextBlock Text="&#xE898;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/><TextBlock Text="导入 Excel" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}"/></StackPanel></Button>
                 </StackPanel>
             </Grid>
             <Grid ColumnDefinitions="Auto,Auto,Auto,*">

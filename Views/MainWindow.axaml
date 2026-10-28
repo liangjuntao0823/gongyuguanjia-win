@@ -1,12 +1,20 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:ApartmentManagerWin.ViewModels"
+        xmlns:local="using:ApartmentManagerWin"
         x:Class="ApartmentManagerWin.Views.MainWindow"
         x:DataType="vm:MainViewModel"
         Title="公寓管家"
         Width="1360" Height="860"
         MinWidth="1080" MinHeight="700"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"><Window.Resources>
+            <local:NavBgConverter x:Key="NavBg" />
+            <local:NavFgConverter x:Key="NavFg" />
+            <local:NavIconBgConverter x:Key="NavIconBg" />
+            <local:NavBarConverter x:Key="NavBar" />
+            <local:NavWeightConverter x:Key="NavWeight" />
+        </Window.Resources>
+
 
     <DockPanel Background="{DynamicResource PageBackground}">
 
@@ -25,7 +33,7 @@
                 <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
                     <ProgressBar Width="180" Height="10" Value="{Binding SyncProgress}" IsVisible="{Binding IsSyncingVisible}" />
                     <TextBlock Text="{Binding SyncStatusText}" Classes="muted" VerticalAlignment="Center" />
-                    <Button Content="立即同步" Classes="primary" Command="{Binding SyncNowCommand}" />
+                    <Button Content="立即同步" Classes="primary" Command="{Binding SyncNowCommand}"><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="&#xE895;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Foreground="White"/><TextBlock Text="立即同步" VerticalAlignment="Center" Foreground="White"/></StackPanel></Button>
                 </StackPanel>
             </Grid>
         </Border>
@@ -61,15 +69,21 @@
                     <ItemsControl ItemsSource="{Binding NavItems}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Button Content="{Binding Title}"
-                                        HorizontalContentAlignment="Stretch"
+                                <Button HorizontalContentAlignment="Stretch"
                                         HorizontalAlignment="Stretch"
                                         Margin="0,2"
-                                        CornerRadius="8"
-                                        Background="{DynamicResource SidebarBackground}"
-                                        Foreground="{DynamicResource TextPrimary}"
+                                        CornerRadius="10"
+                                        Background="{Binding IsSelected, Converter={StaticResource NavBg}}"
+                                        Foreground="{Binding IsSelected, Converter={StaticResource NavFg}}"
                                         Command="{Binding $parent[Window].((vm:MainViewModel)DataContext).NavigateToCommand}"
                                         CommandParameter="{Binding Key}">
+                                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+                                        <Border Grid.Column="0" Width="26" Height="26" CornerRadius="8" Background="{Binding IsSelected, Converter={StaticResource NavIconBg}}" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Glyph}" FontFamily="Segoe MDL2 Assets, Segoe Fluent Icons" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{Binding IsSelected, Converter={StaticResource NavFg}}" />
+                                        </Border>
+                                        <TextBlock Grid.Column="1" Text="{Binding Title}" FontSize="14" FontWeight="{Binding IsSelected, Converter={StaticResource NavWeight}}" Foreground="{Binding IsSelected, Converter={StaticResource NavFg}}" VerticalAlignment="Center" />
+                                        <Border Grid.Column="2" Width="4" Height="22" CornerRadius="2" Background="{Binding IsSelected, Converter={StaticResource NavBar}}" HorizontalAlignment="Right" />
+                                    </Grid>
                                 </Button>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
